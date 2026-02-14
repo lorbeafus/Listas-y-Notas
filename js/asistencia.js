@@ -7,24 +7,33 @@ if (!currentCourseId) {
     window.location.href = 'index.html';
 }
 
-// Month configuration (Marzo-Diciembre with days and colors)
+// Month configuration (Marzo-Diciembre with colors)
 const MONTHS = [
-    { name: 'MARZO', maxDays: 31, color: '#90EE90' },
-    { name: 'ABRIL', maxDays: 30, color: '#87CEEB' },
-    { name: 'MAYO', maxDays: 31, color: '#FFA500' },
-    { name: 'JUNIO', maxDays: 30, color: '#FFB6C1' },
-    { name: 'JULIO', maxDays: 31, color: '#D3D3D3' },
-    { name: 'AGOSTO', maxDays: 31, color: '#87CEFA' },
-    { name: 'SEPTIEMBRE', maxDays: 30, color: '#FFB6C1' },
-    { name: 'OCTUBRE', maxDays: 31, color: '#90EE90' },
-    { name: 'NOVIEMBRE', maxDays: 30, color: '#D8BFD8' },
-    { name: 'DICIEMBRE', maxDays: 31, color: '#87CEEB' }
+    { name: 'MARZO', number: 3, color: '#90EE90' },
+    { name: 'ABRIL', number: 4, color: '#87CEEB' },
+    { name: 'MAYO', number: 5, color: '#FFA500' },
+    { name: 'JUNIO', number: 6, color: '#FFB6C1' },
+    { name: 'JULIO', number: 7, color: '#D3D3D3' },
+    { name: 'AGOSTO', number: 8, color: '#87CEFA' },
+    { name: 'SEPTIEMBRE', number: 9, color: '#FFB6C1' },
+    { name: 'OCTUBRE', number: 10, color: '#90EE90' },
+    { name: 'NOVIEMBRE', number: 11, color: '#D8BFD8' },
+    { name: 'DICIEMBRE', number: 12, color: '#87CEEB' }
+];
+
+const WEEKDAYS = [
+    { name: 'Lunes', value: 1 },
+    { name: 'Martes', value: 2 },
+    { name: 'Miércoles', value: 3 },
+    { name: 'Jueves', value: 4 },
+    { name: 'Viernes', value: 5 }
 ];
 
 // Data structure
 let students = [];
 let attendanceData = {}; // { studentId: { 'MARZO-1': 'P', 'ABRIL-5': 'A', ... } }
-let classDaysConfig = {}; // { 'MARZO': [1, 3, 5, 8, ...], 'ABRIL': [2, 4, 6, ...], ... }
+let weekdayConfig = {}; // { 'MARZO': [1, 3, 5], 'ABRIL': [1, 3, 5], ... } (días de la semana)
+let courseYear = new Date().getFullYear();
 
 // DOM Elements
 const btnConfigureDays = document.getElementById('btn-configure-days');
@@ -37,7 +46,7 @@ function init() {
     updatePageTitle();
     loadStudents();
     loadAttendanceData();
-    loadClassDaysConfig();
+    loadWeekdayConfig();
     renderCalendar();
     renderSummary();
     attachEventListeners();
@@ -46,7 +55,7 @@ function init() {
 // Attach event listeners
 function attachEventListeners() {
     btnConfigureDays.addEventListener('click', openConfigModal);
-    btnSaveConfig.addEventListener('click', saveClassDaysConfig);
+    btnSaveConfig.addEventListener('click', saveWeekdayConfig);
     btnCancelConfig.addEventListener('click', closeConfigModal);
     
     modal.addEventListener('click', (e) => {
@@ -60,6 +69,7 @@ function updatePageTitle() {
     const course = courses.find(c => c.id === currentCourseId);
     
     if (course) {
+        courseYear = parseInt(course.year) || new Date().getFullYear();
         document.getElementById('course-title').textContent = `📋 Asistencias - ${course.name}`;
         document.getElementById('course-subtitle').textContent = `Año ${course.year}`;
         document.title = `Asistencias - ${course.name}`;
@@ -88,22 +98,46 @@ function saveAttendanceData() {
     localStorage.setItem(`${currentCourseId}_attendance`, JSON.stringify(attendanceData));
 }
 
-// Load class days configuration
-function loadClassDaysConfig() {
-    const savedConfig = localStorage.getItem(`${currentCourseId}_classDays`);
+// Load weekday configuration
+function loadWeekdayConfig() {
+    const savedConfig = localStorage.getItem(`${currentCourseId}_weekdays`);
     if (savedConfig) {
-        classDaysConfig = JSON.parse(savedConfig);
+        weekdayConfig = JSON.parse(savedConfig);
     } else {
         // Initialize with empty arrays
         MONTHS.forEach(month => {
-            classDaysConfig[month.name] = [];
+            weekdayConfig[month.name] = [];
         });
     }
 }
 
-// Save class days configuration
-function saveClassDaysConfigToStorage() {
-    localStorage.setItem(`${currentCourseId}_classDays`, JSON.stringify(classDaysConfig));
+// Save weekday configuration
+function saveWeekdayConfigToStorage() {
+    localStorage.setItem(`${currentCourseId}_weekdays`, JSON.stringify(weekdayConfig));
+}
+
+// Get dates for specific weekdays in a month
+function getDatesForWeekdays(year, month, weekdays) {
+    if (!weekdays || weekdays.length === 0) return [];
+    
+    const dates = [];
+    const date = new Date(year, month - 1, 1); // month is 1-indexed
+    
+    // Iterate through all days in the month
+    while (date.getMonth() === month - 1) {
+        const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+        
+        // Convert to our format (1=Monday, 2=Tuesday, ..., 5=Friday)
+        const ourDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+        
+        if (weekdays.includes(ourDayOfWeek)) {
+            dates.push(date.getDate());
+        }
+        
+        date.setDate(date.getDate() + 1);
+    }
+    
+    return dates;
 }
 
 // Open configuration modal
@@ -116,19 +150,29 @@ function openConfigModal() {
         monthDiv.className = 'month-config';
         monthDiv.style.borderLeft = `4px solid ${month.color}`;
         
-        const days = classDaysConfig[month.name] || [];
-        const daysStr = days.join(', ');
+        const selectedWeekdays = weekdayConfig[month.name] || [];
+        
+        let checkboxesHtml = '';
+        WEEKDAYS.forEach(weekday => {
+            const checked = selectedWeekdays.includes(weekday.value) ? 'checked' : '';
+            checkboxesHtml += `
+                <label class="weekday-checkbox">
+                    <input 
+                        type="checkbox" 
+                        value="${weekday.value}"
+                        data-month="${month.name}"
+                        ${checked}
+                    >
+                    <span>${weekday.name}</span>
+                </label>
+            `;
+        });
         
         monthDiv.innerHTML = `
-            <label for="config-${month.name}">${month.name}</label>
-            <input 
-                type="text" 
-                id="config-${month.name}" 
-                placeholder="Ej: 1, 3, 5, 8, 10, 12..."
-                value="${daysStr}"
-                data-month="${month.name}"
-            >
-            <small>Ingresa los días separados por comas</small>
+            <div class="month-header-config">${month.name}</div>
+            <div class="weekday-checkboxes">
+                ${checkboxesHtml}
+            </div>
         `;
         
         container.appendChild(monthDiv);
@@ -142,26 +186,22 @@ function closeConfigModal() {
     modal.classList.remove('active');
 }
 
-// Save class days configuration
-function saveClassDaysConfig() {
+// Save weekday configuration
+function saveWeekdayConfig() {
     MONTHS.forEach(month => {
-        const input = document.getElementById(`config-${month.name}`);
-        const value = input.value.trim();
+        const checkboxes = document.querySelectorAll(`input[type="checkbox"][data-month="${month.name}"]`);
+        const selectedWeekdays = [];
         
-        if (value === '') {
-            classDaysConfig[month.name] = [];
-        } else {
-            // Parse comma-separated numbers
-            const days = value.split(',')
-                .map(d => parseInt(d.trim()))
-                .filter(d => !isNaN(d) && d >= 1 && d <= month.maxDays)
-                .sort((a, b) => a - b);
-            
-            classDaysConfig[month.name] = [...new Set(days)]; // Remove duplicates
-        }
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedWeekdays.push(parseInt(checkbox.value));
+            }
+        });
+        
+        weekdayConfig[month.name] = selectedWeekdays;
     });
     
-    saveClassDaysConfigToStorage();
+    saveWeekdayConfigToStorage();
     closeConfigModal();
     renderCalendar();
     renderSummary();
@@ -177,8 +217,8 @@ function renderCalendar() {
         return;
     }
 
-    // Check if any class days are configured
-    const hasConfiguredDays = MONTHS.some(month => classDaysConfig[month.name]?.length > 0);
+    // Check if any weekdays are configured
+    const hasConfiguredDays = MONTHS.some(month => weekdayConfig[month.name]?.length > 0);
     
     if (!hasConfiguredDays) {
         container.innerHTML = '<p class="no-data">No hay días de clase configurados. Haz clic en "⚙️ Configurar Días de Clase" para empezar.</p>';
@@ -194,11 +234,13 @@ function renderCalendar() {
     headerRow.innerHTML = '<th class="student-col">Estudiante</th>';
     
     MONTHS.forEach(month => {
-        const days = classDaysConfig[month.name] || [];
-        if (days.length > 0) {
+        const weekdays = weekdayConfig[month.name] || [];
+        const dates = getDatesForWeekdays(courseYear, month.number, weekdays);
+        
+        if (dates.length > 0) {
             const th = document.createElement('th');
             th.className = 'month-header';
-            th.colSpan = days.length;
+            th.colSpan = dates.length;
             th.style.backgroundColor = month.color;
             th.textContent = month.name;
             headerRow.appendChild(th);
@@ -219,8 +261,10 @@ function renderCalendar() {
     dayRow.innerHTML = '<th class="student-col">Detalle</th>';
     
     MONTHS.forEach(month => {
-        const days = classDaysConfig[month.name] || [];
-        days.forEach(day => {
+        const weekdays = weekdayConfig[month.name] || [];
+        const dates = getDatesForWeekdays(courseYear, month.number, weekdays);
+        
+        dates.forEach(day => {
             const th = document.createElement('th');
             th.className = 'day-cell';
             th.style.backgroundColor = month.color;
@@ -243,10 +287,12 @@ function renderCalendar() {
         nameCell.textContent = student.name;
         row.appendChild(nameCell);
 
-        // Day cells (only for configured days)
+        // Day cells (only for configured weekdays)
         MONTHS.forEach(month => {
-            const days = classDaysConfig[month.name] || [];
-            days.forEach(day => {
+            const weekdays = weekdayConfig[month.name] || [];
+            const dates = getDatesForWeekdays(courseYear, month.number, weekdays);
+            
+            dates.forEach(day => {
                 const cell = document.createElement('td');
                 cell.className = 'attendance-cell';
                 cell.style.backgroundColor = month.color;
@@ -266,7 +312,7 @@ function renderCalendar() {
                     const val = e.target.value.toUpperCase();
                     if (val === '' || val === 'P' || val === 'A' || val === 'R') {
                         e.target.value = val;
-                        saveAttendance(e.target.dataset.student Id, e.target.dataset.key, val);
+                        saveAttendance(e.target.dataset.studentId, e.target.dataset.key, val);
                     } else {
                         e.target.value = '';
                     }
