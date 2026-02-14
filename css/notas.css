@@ -42,9 +42,35 @@ header {
   gap: 20px;
 }
 
-h1 {
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.header-title h1 {
   font-size: 2em;
   font-weight: 600;
+  margin: 0;
+}
+
+.course-subtitle {
+  font-size: 1em;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  align-self: flex-start;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: white;
 }
 
 .header-controls {
@@ -311,10 +337,6 @@ tr:hover .btn-delete-student {
   header {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  h1 {
-    font-size: 1.5em;
   }
 
   .header-controls {

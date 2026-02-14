@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas - Dashboard</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script defer src="js/index.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Mis Cursos</h1>
+            <button id="btn-add-course" class="btn btn-primary">➕ Crear Nuevo Curso</button>
+        </header>
+
+        <div class="courses-grid" id="courses-grid">
+            <!-- Dynamic course cards -->
+        </div>
+
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">📖</div>
+            <h2>No hay cursos creados</h2>
+            <p>Comienza creando tu primer curso para gestionar las notas de tus estudiantes</p>
+            <button class="btn btn-primary btn-large" onclick="document.getElementById('btn-add-course').click()">
+                ➕ Crear Mi Primer Curso
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal for adding course -->
+    <div id="modal-course" class="modal">
+        <div class="modal-content">
+            <h2>Crear Nuevo Curso</h2>
+            <div class="form-group">
+                <label for="course-name-input">Nombre del Curso:</label>
+                <input type="text" id="course-name-input" placeholder="Ej: 2°A Matemática" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="course-year-input">Año:</label>
+                <input type="number" id="course-year-input" placeholder="2026" value="2026" autocomplete="off">
+            </div>
+            <div class="modal-buttons">
+                <button id="btn-save-course" class="btn btn-primary">Crear Curso</button>
+                <button id="btn-cancel-course" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,3 +1,12 @@
+// Get course ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentCourseId = urlParams.get('curso');
+
+// Redirect to dashboard if no course ID
+if (!currentCourseId) {
+    window.location.href = 'index.html';
+}
+
 // Data structure
 let appData = {
   students: [],
@@ -20,14 +29,27 @@ const btnCancelStudent = document.getElementById("btn-cancel-student");
 
 // Initialize app
 function init() {
+  updatePageTitle();
   loadData();
   renderTables();
   attachEventListeners();
 }
 
-// Load data from localStorage
+// Update page title with course name
+function updatePageTitle() {
+    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+    const course = courses.find(c => c.id === currentCourseId);
+    
+    if (course) {
+        document.getElementById('course-title').textContent = `📚 ${course.name}`;
+        document.getElementById('course-subtitle').textContent = `Año ${course.year}`;
+        document.title = `${course.name} - Sistema de Notas`;
+    }
+}
+
+// Load data from localStorage (course-specific)
 function loadData() {
-  const savedData = localStorage.getItem("notasAppData");
+  const savedData = localStorage.getItem(`${currentCourseId}_data`);
   if (savedData) {
     appData = JSON.parse(savedData);
   } else {
@@ -45,9 +67,9 @@ function loadData() {
   }
 }
 
-// Save data to localStorage
+// Save data to localStorage (course-specific)
 function saveData() {
-  localStorage.setItem("notasAppData", JSON.stringify(appData));
+  localStorage.setItem(`${currentCourseId}_data`, JSON.stringify(appData));
 }
 
 // Attach event listeners

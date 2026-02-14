@@ -12,7 +12,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>📚 Sistema de Notas 2026</h1>
+            <div class="header-left">
+                <button id="btn-back" class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Volver al
+                    Dashboard</button>
+                <div class="header-title">
+                    <h1 id="course-title">📚 Sistema de Notas</h1>
+                    <p id="course-subtitle" class="course-subtitle"></p>
+                </div>
+            </div>
             <div class="header-controls">
                 <button id="btn-add-student" class="btn btn-primary">➕ Agregar Estudiante</button>
                 <button id="btn-export" class="btn btn-secondary">⬇️ Exportar Datos</button>
