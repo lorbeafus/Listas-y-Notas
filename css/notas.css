@@ -334,23 +334,80 @@ tr:hover .btn-delete-student {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
   header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    padding: 20px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-title h1 {
+    font-size: 1.5em;
+  }
+
+  .course-subtitle {
+    font-size: 0.9em;
+  }
+
+  .btn-back {
+    width: 100%;
+    text-align: center;
   }
 
   .header-controls {
     width: 100%;
-    justify-content: flex-start;
+    flex-direction: column;
+  }
+
+  .header-controls .btn {
+    width: 100%;
+  }
+
+  .table-wrapper {
+    padding: 15px;
+  }
+
+  .section-title {
+    font-size: 1em;
+  }
+
+  .btn-add-column {
+    font-size: 11px;
+    padding: 6px 12px;
   }
 
   .modal-content {
     min-width: 90%;
+    padding: 20px;
   }
 
   th,
   td {
-    padding: 8px;
-    font-size: 13px;
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .fixed-col {
+    min-width: 120px;
+    font-size: 11px;
+  }
+
+  .student-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .btn-delete-student {
+    opacity: 1;
+    font-size: 10px;
   }
 }
+
