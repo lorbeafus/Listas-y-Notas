@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas 2026 - Fusillo</title>
+    <link rel="stylesheet" href="css/notas.css">
+    <script defer src="js/notas.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Sistema de Notas 2026</h1>
+            <div class="header-controls">
+                <button id="btn-add-student" class="btn btn-primary">➕ Agregar Estudiante</button>
+                <button id="btn-export" class="btn btn-secondary">⬇️ Exportar Datos</button>
+                <button id="btn-import" class="btn btn-secondary">⬆️ Importar Datos</button>
+                <input type="file" id="file-input" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <div class="table-wrapper">
+            <table id="notas-table">
+                <thead>
+                    <tr id="header-row">
+                        <th class="fixed-col">Estudiante</th>
+                        <th class="section-header" colspan="100">
+                            <div class="section-title">PRIMER CUATRIMESTRE</div>
+                            <button class="btn-add-column" data-section="1">➕ Agregar Evaluación</button>
+                        </th>
+                    </tr>
+                    <tr id="evaluation-names-row-1">
+                        <th class="fixed-col">Detalle</th>
+                        <!-- Dynamic evaluation columns -->
+                    </tr>
+                </thead>
+                <tbody id="students-body">
+                    <!-- Dynamic student rows -->
+                </tbody>
+            </table>
+
+            <div class="section-divider"></div>
+
+            <table id="notas-table-2">
+                <thead>
+                    <tr>
+                        <th class="fixed-col">Estudiante</th>
+                        <th class="section-header" colspan="100">
+                            <div class="section-title">SEGUNDO CUATRIMESTRE</div>
+                            <button class="btn-add-column" data-section="2">➕ Agregar Evaluación</button>
+                        </th>
+                    </tr>
+                    <tr id="evaluation-names-row-2">
+                        <th class="fixed-col">Detalle</th>
+                        <!-- Dynamic evaluation columns -->
+                    </tr>
+                </thead>
+                <tbody id="students-body-2">
+                    <!-- Dynamic student rows -->
+                </tbody>
+            </table>
+
+            <div class="section-divider"></div>
+
+            <table id="final-table">
+                <thead>
+                    <tr>
+                        <th class="fixed-col">Estudiante</th>
+                        <th class="final-col">NOTA FINAL / PROMEDIO</th>
+                    </tr>
+                </thead>
+                <tbody id="final-body">
+                    <!-- Dynamic final grades -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for adding student -->
+    <div id="modal-student" class="modal">
+        <div class="modal-content">
+            <h2>Agregar Estudiante</h2>
+            <input type="text" id="student-name-input" placeholder="Nombre del estudiante" autocomplete="off">
+            <div class="modal-buttons">
+                <button id="btn-save-student" class="btn btn-primary">Guardar</button>
+                <button id="btn-cancel-student" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,334 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #4a90e2;
+  --success-color: #4caf50;
+  --danger-color: #e74c3c;
+  --bg-color: #f5f7fa;
+  --card-bg: #ffffff;
+  --border-color: #ddd;
+  --text-color: #333;
+  --hover-color: #f0f0f0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.table-wrapper {
+  padding: 30px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th,
+td {
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: center;
+  position: relative;
+}
+
+th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.fixed-col {
+  background: #e9ecef;
+  font-weight: bold;
+  min-width: 180px;
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px;
+}
+
+.section-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.btn-add-column {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.btn-add-column:hover {
+  background: white;
+  color: #667eea;
+}
+
+.evaluation-header {
+  min-width: 120px;
+  background: #f1f3f5;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.evaluation-header:hover {
+  background: #dee2e6;
+}
+
+.evaluation-header input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.evaluation-header input:focus {
+  outline: 2px solid var(--primary-color);
+  background: white;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.grade-cell {
+  min-width: 80px;
+  cursor: pointer;
+}
+
+.grade-cell input {
+  width: 100%;
+  border: none;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px;
+  background: transparent;
+}
+
+.grade-cell input:focus {
+  outline: 2px solid var(--primary-color);
+  background: #f0f8ff;
+  border-radius: 4px;
+}
+
+/* Color coding for grades */
+.grade-pass {
+  background-color: rgba(76, 175, 80, 0.2) !important;
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.grade-fail {
+  background-color: rgba(231, 76, 60, 0.2) !important;
+  color: #c62828;
+  font-weight: bold;
+}
+
+.average-cell {
+  background: #fff3cd;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.final-col {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.student-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+}
+
+.btn-delete-student {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+tr:hover .btn-delete-student {
+  opacity: 1;
+}
+
+.btn-delete-student:hover {
+  background: #c0392b;
+}
+
+.section-divider {
+  height: 30px;
+  background: transparent;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  min-width: 400px;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.modal-content input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  .header-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .modal-content {
+    min-width: 90%;
+  }
+
+  th,
+  td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
