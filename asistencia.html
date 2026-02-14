@@ -20,6 +20,9 @@
                     <p id="course-subtitle" class="course-subtitle"></p>
                 </div>
             </div>
+            <div class="header-controls">
+                <button id="btn-configure-days" class="btn btn-primary">⚙️ Configurar Días de Clase</button>
+            </div>
         </header>
 
         <div class="attendance-wrapper">
@@ -34,6 +37,20 @@
                 <div id="summary-container" class="summary-grid">
                     <!-- Dynamically generated -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for configuring class days -->
+    <div id="modal-configure-days" class="modal">
+        <div class="modal-content-large">
+            <h2>⚙️ Configurar Días de Clase</h2>
+            <p class="modal-description">Ingresa los días del mes en que tienes clases (separados por comas). Solo
+                aparecerán estas columnas en el calendario.</p>
+            <div id="months-config-container"></div>
+            <div class="modal-buttons">
+                <button id="btn-save-config" class="btn btn-primary">💾 Guardar Configuración</button>
+                <button id="btn-cancel-config" class="btn btn-secondary">Cancelar</button>
             </div>
         </div>
     </div>

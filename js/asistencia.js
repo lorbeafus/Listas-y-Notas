@@ -9,29 +9,49 @@ if (!currentCourseId) {
 
 // Month configuration (Marzo-Diciembre with days and colors)
 const MONTHS = [
-    { name: 'MARZO', days: 31, color: '#90EE90' },
-    { name: 'ABRIL', days: 30, color: '#87CEEB' },
-    { name: 'MAYO', days: 31, color: '#FFA500' },
-    { name: 'JUNIO', days: 30, color: '#FFB6C1' },
-    { name: 'JULIO', days: 31, color: '#D3D3D3' },
-    { name: 'AGOSTO', days: 31, color: '#87CEFA' },
-    { name: 'SEPTIEMBRE', days: 30, color: '#FFB6C1' },
-    { name: 'OCTUBRE', days: 31, color: '#90EE90' },
-    { name: 'NOVIEMBRE', days: 30, color: '#D8BFD8' },
-    { name: 'DICIEMBRE', days: 31, color: '#87CEEB' }
+    { name: 'MARZO', maxDays: 31, color: '#90EE90' },
+    { name: 'ABRIL', maxDays: 30, color: '#87CEEB' },
+    { name: 'MAYO', maxDays: 31, color: '#FFA500' },
+    { name: 'JUNIO', maxDays: 30, color: '#FFB6C1' },
+    { name: 'JULIO', maxDays: 31, color: '#D3D3D3' },
+    { name: 'AGOSTO', maxDays: 31, color: '#87CEFA' },
+    { name: 'SEPTIEMBRE', maxDays: 30, color: '#FFB6C1' },
+    { name: 'OCTUBRE', maxDays: 31, color: '#90EE90' },
+    { name: 'NOVIEMBRE', maxDays: 30, color: '#D8BFD8' },
+    { name: 'DICIEMBRE', maxDays: 31, color: '#87CEEB' }
 ];
 
 // Data structure
 let students = [];
 let attendanceData = {}; // { studentId: { 'MARZO-1': 'P', 'ABRIL-5': 'A', ... } }
+let classDaysConfig = {}; // { 'MARZO': [1, 3, 5, 8, ...], 'ABRIL': [2, 4, 6, ...], ... }
+
+// DOM Elements
+const btnConfigureDays = document.getElementById('btn-configure-days');
+const modal = document.getElementById('modal-configure-days');
+const btnSaveConfig = document.getElementById('btn-save-config');
+const btnCancelConfig = document.getElementById('btn-cancel-config');
 
 // Initialize
 function init() {
     updatePageTitle();
     loadStudents();
     loadAttendanceData();
+    loadClassDaysConfig();
     renderCalendar();
     renderSummary();
+    attachEventListeners();
+}
+
+// Attach event listeners
+function attachEventListeners() {
+    btnConfigureDays.addEventListener('click', openConfigModal);
+    btnSaveConfig.addEventListener('click', saveClassDaysConfig);
+    btnCancelConfig.addEventListener('click', closeConfigModal);
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeConfigModal();
+    });
 }
 
 // Update page title
@@ -68,10 +88,102 @@ function saveAttendanceData() {
     localStorage.setItem(`${currentCourseId}_attendance`, JSON.stringify(attendanceData));
 }
 
+// Load class days configuration
+function loadClassDaysConfig() {
+    const savedConfig = localStorage.getItem(`${currentCourseId}_classDays`);
+    if (savedConfig) {
+        classDaysConfig = JSON.parse(savedConfig);
+    } else {
+        // Initialize with empty arrays
+        MONTHS.forEach(month => {
+            classDaysConfig[month.name] = [];
+        });
+    }
+}
+
+// Save class days configuration
+function saveClassDaysConfigToStorage() {
+    localStorage.setItem(`${currentCourseId}_classDays`, JSON.stringify(classDaysConfig));
+}
+
+// Open configuration modal
+function openConfigModal() {
+    const container = document.getElementById('months-config-container');
+    container.innerHTML = '';
+    
+    MONTHS.forEach(month => {
+        const monthDiv = document.createElement('div');
+        monthDiv.className = 'month-config';
+        monthDiv.style.borderLeft = `4px solid ${month.color}`;
+        
+        const days = classDaysConfig[month.name] || [];
+        const daysStr = days.join(', ');
+        
+        monthDiv.innerHTML = `
+            <label for="config-${month.name}">${month.name}</label>
+            <input 
+                type="text" 
+                id="config-${month.name}" 
+                placeholder="Ej: 1, 3, 5, 8, 10, 12..."
+                value="${daysStr}"
+                data-month="${month.name}"
+            >
+            <small>Ingresa los días separados por comas</small>
+        `;
+        
+        container.appendChild(monthDiv);
+    });
+    
+    modal.classList.add('active');
+}
+
+// Close configuration modal
+function closeConfigModal() {
+    modal.classList.remove('active');
+}
+
+// Save class days configuration
+function saveClassDaysConfig() {
+    MONTHS.forEach(month => {
+        const input = document.getElementById(`config-${month.name}`);
+        const value = input.value.trim();
+        
+        if (value === '') {
+            classDaysConfig[month.name] = [];
+        } else {
+            // Parse comma-separated numbers
+            const days = value.split(',')
+                .map(d => parseInt(d.trim()))
+                .filter(d => !isNaN(d) && d >= 1 && d <= month.maxDays)
+                .sort((a, b) => a - b);
+            
+            classDaysConfig[month.name] = [...new Set(days)]; // Remove duplicates
+        }
+    });
+    
+    saveClassDaysConfigToStorage();
+    closeConfigModal();
+    renderCalendar();
+    renderSummary();
+}
+
 // Render calendar
 function renderCalendar() {
     const container = document.getElementById('calendar-container');
     container.innerHTML = '';
+
+    if (students.length === 0) {
+        container.innerHTML = '<p class="no-data">No hay estudiantes en este curso. Agrega estudiantes desde la sección de Notas.</p>';
+        return;
+    }
+
+    // Check if any class days are configured
+    const hasConfiguredDays = MONTHS.some(month => classDaysConfig[month.name]?.length > 0);
+    
+    if (!hasConfiguredDays) {
+        container.innerHTML = '<p class="no-data">No hay días de clase configurados. Haz clic en "⚙️ Configurar Días de Clase" para empezar.</p>';
+        return;
+    }
 
     // Create table
     const table = document.createElement('table');
@@ -82,12 +194,15 @@ function renderCalendar() {
     headerRow.innerHTML = '<th class="student-col">Estudiante</th>';
     
     MONTHS.forEach(month => {
-        const th = document.createElement('th');
-        th.className = 'month-header';
-        th.colSpan = month.days;
-        th.style.backgroundColor = month.color;
-        th.textContent = month.name;
-        headerRow.appendChild(th);
+        const days = classDaysConfig[month.name] || [];
+        if (days.length > 0) {
+            const th = document.createElement('th');
+            th.className = 'month-header';
+            th.colSpan = days.length;
+            th.style.backgroundColor = month.color;
+            th.textContent = month.name;
+            headerRow.appendChild(th);
+        }
     });
 
     // Add summary columns
@@ -104,13 +219,14 @@ function renderCalendar() {
     dayRow.innerHTML = '<th class="student-col">Detalle</th>';
     
     MONTHS.forEach(month => {
-        for (let day = 1; day <= month.days; day++) {
+        const days = classDaysConfig[month.name] || [];
+        days.forEach(day => {
             const th = document.createElement('th');
             th.className = 'day-cell';
             th.style.backgroundColor = month.color;
             th.textContent = day;
             dayRow.appendChild(th);
-        }
+        });
     });
 
     // Add empty cells for summary columns
@@ -127,9 +243,10 @@ function renderCalendar() {
         nameCell.textContent = student.name;
         row.appendChild(nameCell);
 
-        // Day cells
+        // Day cells (only for configured days)
         MONTHS.forEach(month => {
-            for (let day = 1; day <= month.days; day++) {
+            const days = classDaysConfig[month.name] || [];
+            days.forEach(day => {
                 const cell = document.createElement('td');
                 cell.className = 'attendance-cell';
                 cell.style.backgroundColor = month.color;
@@ -149,7 +266,7 @@ function renderCalendar() {
                     const val = e.target.value.toUpperCase();
                     if (val === '' || val === 'P' || val === 'A' || val === 'R') {
                         e.target.value = val;
-                        saveAttendance(e.target.dataset.studentId, e.target.dataset.key, val);
+                        saveAttendance(e.target.dataset.student Id, e.target.dataset.key, val);
                     } else {
                         e.target.value = '';
                     }
@@ -157,7 +274,7 @@ function renderCalendar() {
                 
                 cell.appendChild(input);
                 row.appendChild(cell);
-            }
+            });
         });
 
         // Calculate and display summaries
