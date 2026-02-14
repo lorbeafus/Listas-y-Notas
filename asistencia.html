@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Asistencias</title>
+    <link rel="stylesheet" href="css/asistencia.css">
+    <script defer src="js/asistencia.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <button id="btn-back" class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Volver al
+                    Dashboard</button>
+                <div class="header-title">
+                    <h1 id="course-title">📋 Sistema de Asistencias</h1>
+                    <p id="course-subtitle" class="course-subtitle"></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="attendance-wrapper">
+            <!-- Monthly Calendar Grid -->
+            <div class="calendar-container" id="calendar-container">
+                <!-- Dynamically generated -->
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2>Resumen de Asistencias</h2>
+                <div id="summary-container" class="summary-grid">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
