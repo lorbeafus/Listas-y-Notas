@@ -1,6 +1,8 @@
 {
   "name": "Listas y Notas",
   "short_name": "ListasNotas",
+  "id": "/Listas-y-Notas/",
+  "description": "Aplicación para gestión de notas y asistencias escolares.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -10,12 +12,19 @@
     {
       "src": "./img/icon-192.svg",
       "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./img/icon-192.png",
+      "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./img/icon-512.svg",
-      "type": "image/svg+xml",
+      "src": "./img/icon-512.png",
+      "type": "image/png",
       "sizes": "512x512"
     }
-  ]
+  ],
+  "screenshots": []
 }
