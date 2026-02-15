@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Asistencias</title>
     <link rel="stylesheet" href="css/asistencia.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script defer src="js/asistencia.js"></script>
 </head>
 
@@ -22,6 +23,9 @@
             </div>
             <div class="header-controls">
                 <button id="btn-configure-days" class="btn btn-primary">⚙️ Configurar Días de Clase</button>
+                <button id="btn-export" class="btn btn-secondary">📥 Exportar Excel</button>
+                <button id="btn-import" class="btn btn-secondary">📤 Importar Excel</button>
+                <input type="file" id="file-import" accept=".csv,.xlsx,.xls" style="display: none;">
             </div>
         </header>
 
@@ -45,8 +49,15 @@
     <div id="modal-configure-days" class="modal">
         <div class="modal-content-large">
             <h2>⚙️ Configurar Días de Clase</h2>
-            <p class="modal-description">Ingresa los días del mes en que tienes clases (separados por comas). Solo
-                aparecerán estas columnas en el calendario.</p>
+            <p class="modal-description">Selecciona qué días de la semana tienes clases en cada mes. El sistema
+                calculará automáticamente las fechas según el año del curso.</p>
+
+            <div class="start-date-config">
+                <label for="start-date-input">📅 Fecha de inicio de clases:</label>
+                <input type="date" id="start-date-input" />
+                <small>Solo se mostrarán las fechas desde este día en adelante</small>
+            </div>
+
             <div id="months-config-container"></div>
             <div class="modal-buttons">
                 <button id="btn-save-config" class="btn btn-primary">💾 Guardar Configuración</button>

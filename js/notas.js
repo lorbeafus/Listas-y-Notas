@@ -65,6 +65,11 @@ function loadData() {
       "Evaluación 3",
     ];
   }
+  
+  // Sort students alphabetically by name
+  if (appData.students) {
+    appData.students.sort((a, b) => a.name.localeCompare(b.name));
+  }
 }
 
 // Save data to localStorage (course-specific)
@@ -219,7 +224,8 @@ function renderStudentRows() {
     tr1.innerHTML = `
             <td class="fixed-col">
                 <div class="student-name">
-                    <span>${student.name}</span>
+                    <span class="student-number">${appData.students.indexOf(student) + 1}.</span>
+                    <span class="student-text">${student.name}</span>
                     <button class="btn-delete-student" onclick="deleteStudent('${student.id}')">🗑️</button>
                 </div>
             </td>
@@ -249,7 +255,8 @@ function renderStudentRows() {
     tr2.innerHTML = `
             <td class="fixed-col">
                 <div class="student-name">
-                    <span>${student.name}</span>
+                    <span class="student-number">${appData.students.indexOf(student) + 1}.</span>
+                    <span class="student-text">${student.name}</span>
                     <button class="btn-delete-student" onclick="deleteStudent('${student.id}')">🗑️</button>
                 </div>
             </td>
@@ -355,35 +362,194 @@ function applyGradeColor(element, grade) {
   }
 }
 
-// Export data
+// Export data to CSV (Excel compatible)
 function exportData() {
-  const dataStr = JSON.stringify(appData, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json" });
+  if (appData.students.length === 0) {
+    alert('No hay datos para exportar');
+    return;
+  }
+
+  // Get course name for filename
+  const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+  const course = courses.find(c => c.id === currentCourseId);
+  const courseName = course ? course.name.replace(/[^a-z0-9]/gi, '_') : 'curso';
+
+  // Build CSV content
+  const rows = [];
+  
+  // Header row
+  const headerRow = ['Estudiante'];
+  appData.evaluations.cuatri1.forEach(name => headerRow.push(name));
+  headerRow.push('Promedio 1C');
+  appData.evaluations.cuatri2.forEach(name => headerRow.push(name));
+  headerRow.push('Promedio 2C', 'Promedio Final');
+  rows.push(headerRow);
+
+  // Data rows
+  appData.students.forEach(student => {
+    const row = [student.name];
+    
+    // First cuatrimestre
+    appData.evaluations.cuatri1.forEach((_, index) => {
+      const grade = appData.grades[student.id]?.cuatri1?.[index] || '';
+      row.push(grade);
+    });
+    const avg1 = calculateAverage(student.id, 'cuatri1');
+    row.push(avg1 > 0 ? avg1.toFixed(2).replace('.', ',') : '');
+    
+    // Second cuatrimestre
+    appData.evaluations.cuatri2.forEach((_, index) => {
+      const grade = appData.grades[student.id]?.cuatri2?.[index] || '';
+      row.push(grade);
+    });
+    const avg2 = calculateAverage(student.id, 'cuatri2');
+    row.push(avg2 > 0 ? avg2.toFixed(2).replace('.', ',') : '');
+    
+    // Final Average
+    const finalAvg = (avg1 + avg2) / 2;
+    row.push(finalAvg > 0 ? finalAvg.toFixed(2).replace('.', ',') : '');
+    
+    rows.push(row);
+  });
+
+  // Convert to CSV
+  const csvContent = rows.map(row => 
+    row.map(cell => `"${cell}"`).join(';')
+  ).join('\n');
+
+  // Add BOM for Excel UTF-8 compatibility
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.download = `notas_${new Date().toISOString().split("T")[0]}.json`;
+  a.download = `notas_${courseName}_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-// Import data
+// Import data (supports JSON, CSV, and Excel via SheetJS)
 function importData(e) {
   const file = e.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = (event) => {
-    try {
-      appData = JSON.parse(event.target.result);
-      saveData();
-      renderTables();
-      alert("Datos importados correctamente");
-    } catch (error) {
-      alert("Error al importar datos: archivo inválido");
+
+  if (file.name.endsWith('.json')) {
+    reader.onload = (event) => {
+      try {
+        appData = JSON.parse(event.target.result);
+        saveData();
+        renderTables();
+        alert("Datos importados correctamente");
+      } catch (error) {
+        alert("Error al importar JSON: archivo inválido");
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    // Assume Excel/CSV for other extensions if XLSX is available
+    if (typeof XLSX === 'undefined') {
+      alert("Error: La librería SheetJS no se ha cargado correctamente.");
+      return;
     }
-  };
-  reader.readAsText(file);
+
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Get first sheet
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convert to array of arrays (header included)
+        const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (rows.length < 2) {
+          alert('Archivo vacío o formato inválido');
+          return;
+        }
+
+        const headers = rows[0];
+        const dataRows = rows.slice(1);
+
+        // Process rows
+        dataRows.forEach(row => {
+          if (row.length === 0 || !row[0]) return;
+          
+          const studentName = row[0];
+          // Find or create student
+          let student = appData.students.find(s => s.name === studentName);
+          let isNew = false;
+          
+          if (!student) {
+            student = { id: "student_" + Date.now() + Math.random().toString(36).substr(2, 9), name: studentName };
+            appData.students.push(student);
+            appData.grades[student.id] = { cuatri1: {}, cuatri2: {} };
+            isNew = true;
+          }
+
+          // Map columns to grades
+          // Structure matches export: 
+          // [0]Name, 
+          // [1..N] Cuatri1 evals, 
+          // [N+1] Avg1, 
+          // [N+2..M] Cuatri2 evals, 
+          // [M+1] Avg2, 
+          // [M+2] FinalAvg
+          
+          let colIndex = 1;
+
+          // Import Cuatri 1 grades
+          appData.evaluations.cuatri1.forEach((_, index) => {
+            if (colIndex < row.length) {
+              const val = row[colIndex];
+              // Only import if it looks like a number
+              if (val !== undefined && val !== null && val !== '') {
+                 if (!appData.grades[student.id]) appData.grades[student.id] = { cuatri1: {}, cuatri2: {} };
+                 if (!appData.grades[student.id].cuatri1) appData.grades[student.id].cuatri1 = {};
+                 
+                 // Handle potential numeric or string input
+                 appData.grades[student.id].cuatri1[index] = val.toString().replace(',', '.');
+              }
+            }
+            colIndex++;
+          });
+          
+          // Skip Average 1C column
+          colIndex++;
+
+          // Import Cuatri 2 grades
+          appData.evaluations.cuatri2.forEach((_, index) => {
+             if (colIndex < row.length) {
+              const val = row[colIndex];
+              if (val !== undefined && val !== null && val !== '') {
+                 if (!appData.grades[student.id]) appData.grades[student.id] = { cuatri1: {}, cuatri2: {} };
+                 if (!appData.grades[student.id].cuatri2) appData.grades[student.id].cuatri2 = {};
+                 
+                 appData.grades[student.id].cuatri2[index] = val.toString().replace(',', '.');
+              }
+            }
+            colIndex++;
+          });
+          
+        });
+
+        saveData();
+        renderTables();
+        alert('Datos de Excel importados correctamente');
+
+      } catch (error) {
+        console.error(error);
+        alert("Error al procesar el archivo Excel. Asegúrate de que el formato coincida con el de exportación.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  
+  // Reset file input
+  e.target.value = '';
 }
 
 // Make deleteStudent global

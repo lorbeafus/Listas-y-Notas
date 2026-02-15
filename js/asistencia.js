@@ -33,6 +33,7 @@ const WEEKDAYS = [
 let students = [];
 let attendanceData = {}; // { studentId: { 'MARZO-1': 'P', 'ABRIL-5': 'A', ... } }
 let weekdayConfig = {}; // { 'MARZO': [1, 3, 5], 'ABRIL': [1, 3, 5], ... } (días de la semana)
+let startDate = null; // Fecha de inicio de clases
 let courseYear = new Date().getFullYear();
 
 // DOM Elements
@@ -58,6 +59,12 @@ function attachEventListeners() {
     btnSaveConfig.addEventListener('click', saveWeekdayConfig);
     btnCancelConfig.addEventListener('click', closeConfigModal);
     
+    document.getElementById('btn-export').addEventListener('click', exportToExcel);
+    document.getElementById('btn-import').addEventListener('click', () => {
+        document.getElementById('file-import').click();
+    });
+    document.getElementById('file-import').addEventListener('change', importFromExcel);
+    
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeConfigModal();
     });
@@ -82,6 +89,8 @@ function loadStudents() {
     if (courseData) {
         const data = JSON.parse(courseData);
         students = data.students || [];
+        // Sort students alphabetically
+        students.sort((a, b) => a.name.localeCompare(b.name));
     }
 }
 
@@ -109,11 +118,20 @@ function loadWeekdayConfig() {
             weekdayConfig[month.name] = [];
         });
     }
+    
+    // Load start date
+    const savedStartDate = localStorage.getItem(`${currentCourseId}_startDate`);
+    if (savedStartDate) {
+        startDate = new Date(savedStartDate);
+    }
 }
 
 // Save weekday configuration
 function saveWeekdayConfigToStorage() {
     localStorage.setItem(`${currentCourseId}_weekdays`, JSON.stringify(weekdayConfig));
+    if (startDate) {
+        localStorage.setItem(`${currentCourseId}_startDate`, startDate.toISOString());
+    }
 }
 
 // Get dates for specific weekdays in a month
@@ -131,7 +149,10 @@ function getDatesForWeekdays(year, month, weekdays) {
         const ourDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
         
         if (weekdays.includes(ourDayOfWeek)) {
-            dates.push(date.getDate());
+            // Check if this date is on or after start date
+            if (!startDate || date >= startDate) {
+                dates.push(date.getDate());
+            }
         }
         
         date.setDate(date.getDate() + 1);
@@ -144,6 +165,18 @@ function getDatesForWeekdays(year, month, weekdays) {
 function openConfigModal() {
     const container = document.getElementById('months-config-container');
     container.innerHTML = '';
+    
+    // Set start date input value
+    const startDateInput = document.getElementById('start-date-input');
+    if (startDate) {
+        // Format date as YYYY-MM-DD for input
+        const year = startDate.getFullYear();
+        const month = String(startDate.getMonth() + 1).padStart(2, '0');
+        const day = String(startDate.getDate()).padStart(2, '0');
+        startDateInput.value = `${year}-${month}-${day}`;
+    } else {
+        startDateInput.value = '';
+    }
     
     MONTHS.forEach(month => {
         const monthDiv = document.createElement('div');
@@ -188,6 +221,15 @@ function closeConfigModal() {
 
 // Save weekday configuration
 function saveWeekdayConfig() {
+    // Save start date
+    const startDateInput = document.getElementById('start-date-input');
+    if (startDateInput.value) {
+        startDate = new Date(startDateInput.value + 'T00:00:00');
+    } else {
+        startDate = null;
+    }
+    
+    // Save weekdays
     MONTHS.forEach(month => {
         const checkboxes = document.querySelectorAll(`input[type="checkbox"][data-month="${month.name}"]`);
         const selectedWeekdays = [];
@@ -278,13 +320,18 @@ function renderCalendar() {
     table.appendChild(dayRow);
 
     // Create student rows
-    students.forEach(student => {
+    students.forEach((student, index) => {
         const row = document.createElement('tr');
         
         // Student name cell
         const nameCell = document.createElement('td');
         nameCell.className = 'student-col';
-        nameCell.textContent = student.name;
+        nameCell.innerHTML = `
+            <div class="student-name-container">
+                <span class="student-number">${index + 1}.</span>
+                <span class="student-text">${student.name}</span>
+            </div>
+        `;
         row.appendChild(nameCell);
 
         // Day cells (only for configured weekdays)
@@ -331,12 +378,21 @@ function renderCalendar() {
         const cuatri2Stats = calculateAttendance(student.id, cuatri2Months);
         const totalClasses = cuatri1Stats.total + cuatri2Stats.total;
 
-        // Summary cells
-        row.innerHTML += `
-            <td class="summary-col">${cuatri1Stats.percentage.toFixed(0)}%</td>
-            <td class="summary-col">${cuatri2Stats.percentage.toFixed(0)}%</td>
-            <td class="summary-col">${totalClasses}</td>
-        `;
+        // Summary cells - create them properly to avoid overwriting inputs
+        const cuatri1Cell = document.createElement('td');
+        cuatri1Cell.className = 'summary-col';
+        cuatri1Cell.textContent = `${cuatri1Stats.percentage.toFixed(0)}%`;
+        row.appendChild(cuatri1Cell);
+
+        const cuatri2Cell = document.createElement('td');
+        cuatri2Cell.className = 'summary-col';
+        cuatri2Cell.textContent = `${cuatri2Stats.percentage.toFixed(0)}%`;
+        row.appendChild(cuatri2Cell);
+
+        const totalCell = document.createElement('td');
+        totalCell.className = 'summary-col';
+        totalCell.textContent = totalClasses;
+        row.appendChild(totalCell);
 
         table.appendChild(row);
     });
@@ -404,6 +460,7 @@ function renderSummary() {
         
         const cuatri1Stats = calculateAttendance(student.id, cuatri1Months);
         const cuatri2Stats = calculateAttendance(student.id, cuatri2Months);
+        const totalClasses = cuatri1Stats.total + cuatri2Stats.total;
 
         const card = document.createElement('div');
         card.className = 'summary-card';
@@ -413,15 +470,199 @@ function renderSummary() {
                 <div class="stat-item">
                     <span class="stat-label">1er Cuatrimestre</span>
                     <span class="stat-value ${cuatri1Stats.percentage >= 75 ? 'good' : 'bad'}">${cuatri1Stats.percentage.toFixed(0)}%</span>
+                    <span class="stat-sublabel">${cuatri1Stats.total} clases</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">2do Cuatrimestre</span>
                     <span class="stat-value ${cuatri2Stats.percentage >= 75 ? 'good' : 'bad'}">${cuatri2Stats.percentage.toFixed(0)}%</span>
+                    <span class="stat-sublabel">${cuatri2Stats.total} clases</span>
                 </div>
+            </div>
+            <div class="total-classes">
+                <strong>Total: ${totalClasses} clases dadas</strong>
             </div>
         `;
         container.appendChild(card);
     });
+}
+
+// Export to Excel (CSV format)
+function exportToExcel() {
+    if (students.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+    }
+
+    // Get course name for filename
+    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+    const course = courses.find(c => c.id === currentCourseId);
+    const courseName = course ? course.name.replace(/[^a-z0-9]/gi, '_') : 'curso';
+
+    // Build CSV content
+    const rows = [];
+    
+    // Header row with months
+    const headerRow = ['Estudiante'];
+    MONTHS.forEach(month => {
+        const weekdays = weekdayConfig[month.name] || [];
+        const dates = getDatesForWeekdays(courseYear, month.number, weekdays);
+        dates.forEach(day => {
+            headerRow.push(`${month.name}-${day}`);
+        });
+    });
+    headerRow.push('% 1er Cuatri', '% 2do Cuatri', 'Clases Totales');
+    rows.push(headerRow);
+
+    // Data rows
+    students.forEach(student => {
+        const row = [student.name];
+        
+        MONTHS.forEach(month => {
+            const weekdays = weekdayConfig[month.name] || [];
+            const dates = getDatesForWeekdays(courseYear, month.number, weekdays);
+            dates.forEach(day => {
+                const key = `${month.name}-${day}`;
+                const value = attendanceData[student.id]?.[key] || '';
+                row.push(value);
+            });
+        });
+
+        const cuatri1Months = ['MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO'];
+        const cuatri2Months = ['AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+        const cuatri1Stats = calculateAttendance(student.id, cuatri1Months);
+        const cuatri2Stats = calculateAttendance(student.id, cuatri2Months);
+        const totalClasses = cuatri1Stats.total + cuatri2Stats.total;
+
+        row.push(
+            `${cuatri1Stats.percentage.toFixed(0)}%`,
+            `${cuatri2Stats.percentage.toFixed(0)}%`,
+            totalClasses
+        );
+        
+        rows.push(row);
+    });
+
+    // Convert to CSV
+    const csvContent = rows.map(row => 
+        row.map(cell => `"${cell}"`).join(';')
+    ).join('\n');
+
+    // Add BOM for Excel UTF-8 compatibility
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `asistencias_${courseName}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Import from Excel (supports CSV and XLSX via SheetJS)
+function importFromExcel(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check if SheetJS is available
+    if (typeof XLSX === 'undefined') {
+        alert("Error: La librería SheetJS no se ha cargado correctamente.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Get first sheet
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // Convert to array of arrays (header included)
+            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+            if (rows.length < 2) {
+                alert('Archivo vacío o formato inválido');
+                return;
+            }
+
+            const headers = rows[0];
+            const dataRows = rows.slice(1);
+
+            // Helper to interpret header as our date format (MONTH-DAY)
+            const getHeaderKey = (header) => {
+                if (!header) return null;
+
+                // Case 1: String "MARZO-1"
+                if (typeof header === 'string') {
+                    if (header.includes('-') && !header.includes('%') && !header.includes('Clases')) {
+                        return header;
+                    }
+                }
+                
+                // Case 2: Excel Date Serial Number (e.g. 45352)
+                if (typeof header === 'number') {
+                    try {
+                        const dateInfo = XLSX.SSF.parse_date_code(header);
+                        // Find month name from number (1-12)
+                        const monthObj = MONTHS.find(m => m.number === dateInfo.m);
+                        if (monthObj) {
+                            return `${monthObj.name}-${dateInfo.d}`;
+                        }
+                    } catch (err) {
+                        return null;
+                    }
+                }
+
+                return null;
+            };
+
+            // Import attendance data
+            dataRows.forEach((row, idx) => {
+                if (row.length === 0 || !row[0]) return;
+                
+                const studentName = row[0];
+                const student = students.find(s => s.name === studentName);
+                
+                if (!student) {
+                    console.warn(`Estudiante no encontrado: ${studentName}`);
+                    return;
+                }
+
+                // Import attendance marks
+                for (let i = 1; i < row.length; i++) {
+                    // Check if column header corresponds to a date
+                    const key = getHeaderKey(headers[i]);
+                    
+                    if (key) {
+                        const value = row[i];
+                        if (value) {
+                            const valStr = String(value).toUpperCase().trim();
+                            if (valStr === 'P' || valStr === 'A' || valStr === 'R') {
+                                if (!attendanceData[student.id]) {
+                                    attendanceData[student.id] = {};
+                                }
+                                attendanceData[student.id][key] = valStr;
+                            }
+                        }
+                    }
+                }
+            });
+
+            saveAttendanceData();
+            renderCalendar();
+            renderSummary();
+            alert('Datos importados correctamente');
+        } catch (error) {
+            console.error(error);
+            alert('Error al importar: formato de archivo inválido');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+    
+    // Reset file input
+    e.target.value = '';
 }
 
 // Initialize on load

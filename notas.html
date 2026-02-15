@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Notas 2026 - Fusillo</title>
     <link rel="stylesheet" href="css/notas.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script defer src="js/notas.js"></script>
 </head>
 
@@ -22,9 +23,9 @@
             </div>
             <div class="header-controls">
                 <button id="btn-add-student" class="btn btn-primary">➕ Agregar Estudiante</button>
-                <button id="btn-export" class="btn btn-secondary">⬇️ Exportar Datos</button>
-                <button id="btn-import" class="btn btn-secondary">⬆️ Importar Datos</button>
-                <input type="file" id="file-input" accept=".json" style="display: none;">
+                <button id="btn-export" class="btn btn-secondary">📥 Exportar Excel</button>
+                <button id="btn-import" class="btn btn-secondary">📤 Importar Excel</button>
+                <input type="file" id="file-input" accept=".csv,.xlsx,.xls,.json" style="display: none;">
             </div>
         </header>
 
