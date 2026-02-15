@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Notas - Dashboard</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="manifest" href="manifest.json">
     <script defer src="js/index.js"></script>
 </head>
 
@@ -48,6 +49,15 @@
             </div>
         </div>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('Service Worker registrado', reg))
+                    .catch(err => console.log('Error al registrar Service Worker', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
