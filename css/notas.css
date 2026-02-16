@@ -347,7 +347,13 @@ tr:hover .btn-delete-student {
 /* Responsive design */
 @media (max-width: 768px) {
   body {
-    padding: 5px;
+    padding: 0;
+  }
+
+  .container {
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
   }
 
   header {
@@ -394,7 +400,7 @@ tr:hover .btn-delete-student {
   }
 
   .table-wrapper {
-    padding: 5px;
+    padding: 5px 0;
   }
 
   table {

@@ -273,7 +273,7 @@ function renderCalendar() {
 
     // Create header row with months
     const headerRow = document.createElement('tr');
-    headerRow.innerHTML = '<th class="student-col">Estudiante</th>';
+    headerRow.innerHTML = '<th class="student-col top-sticky">Estudiante</th>';
     
     MONTHS.forEach(month => {
         const weekdays = weekdayConfig[month.name] || [];
@@ -300,7 +300,7 @@ function renderCalendar() {
 
     // Create day numbers row
     const dayRow = document.createElement('tr');
-    dayRow.innerHTML = '<th class="student-col">Detalle</th>';
+    dayRow.innerHTML = '<th class="student-col sub-sticky">Detalle</th>';
     
     MONTHS.forEach(month => {
         const weekdays = weekdayConfig[month.name] || [];

@@ -16,7 +16,7 @@
 
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #4667337d 0%, #4a744a88 100%);
+    background: linear-gradient(135deg, #397714 0%, #bdeebdd4 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -31,7 +31,7 @@ body {
 }
 
 header {
-    background: linear-gradient(135deg, #4667337d 0%, #4a744a88 100%);
+    background: linear-gradient(135deg,#397714 0%, #bdeebdd4 100%);
     color: white;
     padding: 30px;
     display: flex;
@@ -144,6 +144,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 10;
+    height: 40px;
 }
 
 .day-cell {
@@ -153,19 +154,30 @@ header {
     position: sticky;
     top: 40px;
     z-index: 9;
+    height: 30px;
 }
 
 .student-col {
     position: sticky;
     left: 0;
     background-color: #f8f9fa;
-    z-index: 2;
+    z-index: 11;
     min-width: 150px;
     font-weight: bold;
     color: var(--text-color);
     box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     text-align: left;
     padding-left: 15px;
+}
+
+.student-col.top-sticky {
+    top: 0;
+    z-index: 15;
+}
+
+.student-col.sub-sticky {
+    top: 40px;
+    z-index: 14;
 }
 
 .student-name-container {
@@ -439,7 +451,13 @@ header {
 /* Responsive */
 @media (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 0;
+    }
+
+    .container {
+        border-radius: 0;
+        margin: 0;
+        box-shadow: none;
     }
 
     header {
@@ -457,14 +475,23 @@ header {
 
     .header-controls {
         width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    #btn-configure-days {
+        grid-column: span 2;
     }
 
     .header-controls .btn {
         width: 100%;
+        padding: 8px 10px;
+        font-size: 13px;
     }
 
     .attendance-wrapper {
-        padding: 15px;
+        padding: 15px 0;
     }
 
     .student-col {
