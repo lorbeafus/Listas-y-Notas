@@ -178,7 +178,7 @@ function renderEvaluationHeaders() {
   // Average column
   const avgTh1 = document.createElement("th");
   avgTh1.className = "average-cell";
-  avgTh1.textContent = "PROMEDIO 1ER CUATRI";
+  avgTh1.textContent = window.innerWidth < 768 ? "PROM. 1C" : "PROMEDIO 1ER CUATRI";
   evalRow1.appendChild(avgTh1);
 
   // Cuatrimestre 2
@@ -195,7 +195,7 @@ function renderEvaluationHeaders() {
   // Average column
   const avgTh2 = document.createElement("th");
   avgTh2.className = "average-cell";
-  avgTh2.textContent = "PROMEDIO 2DO CUATRI";
+  avgTh2.textContent = window.innerWidth < 768 ? "PROM. 2C" : "PROMEDIO 2DO CUATRI";
   evalRow2.appendChild(avgTh2);
 
   // Add event listeners to evaluation name inputs
