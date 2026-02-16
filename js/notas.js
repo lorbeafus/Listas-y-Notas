@@ -26,6 +26,11 @@ const modal = document.getElementById("modal-student");
 const studentNameInput = document.getElementById("student-name-input");
 const btnSaveStudent = document.getElementById("btn-save-student");
 const btnCancelStudent = document.getElementById("btn-cancel-student");
+const modalEvaluation = document.getElementById("modal-evaluation");
+const evaluationNameInput = document.getElementById("evaluation-name-input");
+const btnSaveEvaluation = document.getElementById("btn-save-evaluation");
+const btnCancelEvaluation = document.getElementById("btn-cancel-evaluation");
+let currentEvaluationSection = null;
 
 // Initialize app
 function init() {
@@ -88,13 +93,20 @@ function attachEventListeners() {
   document.querySelectorAll(".btn-add-column").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const section = e.target.dataset.section;
-      addEvaluationColumn(section);
+      openEvaluationModal(section);
     });
   });
 
-  // Close modal on outside click
+  // Evaluation modal buttons
+  btnSaveEvaluation.addEventListener("click", saveEvaluation);
+  btnCancelEvaluation.addEventListener("click", closeEvaluationModal);
+
+  // Close modals on outside click
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeStudentModal();
+  });
+  modalEvaluation.addEventListener("click", (e) => {
+    if (e.target === modalEvaluation) closeEvaluationModal();
   });
 }
 
@@ -141,16 +153,34 @@ function deleteStudent(studentId) {
   renderTables();
 }
 
-// Add evaluation column
-function addEvaluationColumn(section) {
-  const name = prompt(`Nombre de la nueva evaluación:`);
-  if (!name) return;
+// Open evaluation modal
+function openEvaluationModal(section) {
+  currentEvaluationSection = section;
+  modalEvaluation.classList.add("active");
+  evaluationNameInput.value = "";
+  evaluationNameInput.focus();
+}
 
-  const key = section === "1" ? "cuatri1" : "cuatri2";
+// Close evaluation modal
+function closeEvaluationModal() {
+  modalEvaluation.classList.remove("active");
+  currentEvaluationSection = null;
+}
+
+// Save evaluation from modal
+function saveEvaluation() {
+  const name = evaluationNameInput.value.trim();
+  if (name === "") {
+    alert("Por favor ingrese un nombre para la evaluación");
+    return;
+  }
+
+  const key = currentEvaluationSection === "1" ? "cuatri1" : "cuatri2";
   appData.evaluations[key].push(name);
 
   saveData();
   renderTables();
+  closeEvaluationModal();
 }
 
 // Render all tables

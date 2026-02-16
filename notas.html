@@ -102,6 +102,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal for adding evaluation -->
+    <div id="modal-evaluation" class="modal">
+        <div class="modal-content">
+            <h2>Agregar Actividad</h2>
+            <div class="form-group">
+                <label for="evaluation-name-input">Nombre de la nueva actividad:</label>
+                <input type="text" id="evaluation-name-input" placeholder="Ej: Evaluación 1, TP 2..."
+                    autocomplete="off">
+            </div>
+            <div class="modal-buttons">
+                <button id="btn-save-evaluation" class="btn btn-primary">Agregar</button>
+                <button id="btn-cancel-evaluation" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

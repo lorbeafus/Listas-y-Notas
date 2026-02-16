@@ -17,7 +17,7 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #397714 0%, #bdeebdd4 100%);
   min-height: 100vh;
   padding: 20px;
 }
@@ -32,7 +32,7 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #397714 0%, #bdeebdd4 100%);
   color: white;
   padding: 30px;
   display: flex;
@@ -90,24 +90,24 @@ header {
 }
 
 .btn-primary {
-  background: #4caf50;
+  background: #365d37;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #45a049;
+  background: #397714;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 .btn-secondary {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #397714;
+  border: 2px solid #397714;
 }
 
 .btn-secondary:hover {
-  background: #667eea;
+  background: #397714;
   color: white;
   transform: translateY(-2px);
 }
@@ -158,7 +158,7 @@ th {
 }
 
 .section-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #397714 0%, #5abb5ad4 100%);
   color: white;
   padding: 5px 10px;
   position: sticky;
@@ -271,7 +271,7 @@ th {
 }
 
 .final-col {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #5b59e6 0%, #8789ee 100%);
   color: white;
   font-weight: bold;
   font-size: 1.1em;
@@ -370,6 +370,17 @@ tr:hover .btn-delete-student {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-color);
 }
 
 /* Responsive design */
