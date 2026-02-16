@@ -57,12 +57,10 @@ function loadData() {
     appData.evaluations.cuatri1 = [
       "Evaluación 1",
       "Evaluación 2",
-      "Evaluación 3",
     ];
     appData.evaluations.cuatri2 = [
       "Evaluación 1",
       "Evaluación 2",
-      "Evaluación 3",
     ];
   }
   
@@ -166,7 +164,7 @@ function renderTables() {
 function renderEvaluationHeaders() {
   // Cuatrimestre 1
   const evalRow1 = document.getElementById("evaluation-names-row-1");
-  evalRow1.innerHTML = '<th class="fixed-col">Detalle</th>';
+  evalRow1.innerHTML = '<th class="fixed-col sub-sticky">Detalle</th>';
 
   appData.evaluations.cuatri1.forEach((evalName, index) => {
     const th = document.createElement("th");
@@ -183,7 +181,7 @@ function renderEvaluationHeaders() {
 
   // Cuatrimestre 2
   const evalRow2 = document.getElementById("evaluation-names-row-2");
-  evalRow2.innerHTML = '<th class="fixed-col">Detalle</th>';
+  evalRow2.innerHTML = '<th class="fixed-col sub-sticky">Detalle</th>';
 
   appData.evaluations.cuatri2.forEach((evalName, index) => {
     const th = document.createElement("th");
