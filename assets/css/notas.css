@@ -261,6 +261,25 @@ th {
   font-weight: bold;
 }
 
+/* Pre-Informe column */
+.pre-informe-cell {
+  background: #f0f0f0;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.pre-informe-cell.tea {
+  background-color: rgba(76, 175, 80, 0.25);
+  color: #2e7d32;
+}
+
+.pre-informe-cell.tep {
+  background-color: rgba(231, 76, 60, 0.25);
+  color: #c62828;
+}
+
 .average-cell {
   background: #fff3cd;
   font-weight: bold;

@@ -204,6 +204,12 @@ function renderEvaluationHeaders() {
     evalRow1.appendChild(th);
   });
 
+  // Pre-Informe column
+  const preInfTh1 = document.createElement("th");
+  preInfTh1.className = "pre-informe-cell";
+  preInfTh1.textContent = "Pre-Informe";
+  evalRow1.appendChild(preInfTh1);
+
   // Average column
   const avgTh1 = document.createElement("th");
   avgTh1.className = "average-cell";
@@ -220,6 +226,12 @@ function renderEvaluationHeaders() {
     th.innerHTML = `<input type="text" value="${evalName}" data-section="2" data-index="${index}">`;
     evalRow2.appendChild(th);
   });
+
+  // Pre-Informe column
+  const preInfTh2 = document.createElement("th");
+  preInfTh2.className = "pre-informe-cell";
+  preInfTh2.textContent = "Pre-Informe";
+  evalRow2.appendChild(preInfTh2);
 
   // Average column
   const avgTh2 = document.createElement("th");
@@ -269,10 +281,19 @@ function renderStudentRows() {
       tr1.appendChild(td);
     });
 
+    // Pre-Informe cell
+    const preInfTd1 = document.createElement("td");
+    preInfTd1.className = "pre-informe-cell";
+    const avg1 = calculateAverage(student.id, "cuatri1");
+    if (avg1 > 0) {
+      preInfTd1.textContent = avg1 >= 7 ? "TEA" : "TEP";
+      preInfTd1.classList.add(avg1 >= 7 ? "tea" : "tep");
+    }
+    tr1.appendChild(preInfTd1);
+
     // Average cell
     const avgTd1 = document.createElement("td");
     avgTd1.className = "average-cell";
-    const avg1 = calculateAverage(student.id, "cuatri1");
     avgTd1.textContent = avg1.toFixed(2);
     applyGradeColor(avgTd1, avg1);
     tr1.appendChild(avgTd1);
@@ -300,10 +321,19 @@ function renderStudentRows() {
       tr2.appendChild(td);
     });
 
+    // Pre-Informe cell
+    const preInfTd2 = document.createElement("td");
+    preInfTd2.className = "pre-informe-cell";
+    const avg2 = calculateAverage(student.id, "cuatri2");
+    if (avg2 > 0) {
+      preInfTd2.textContent = avg2 >= 7 ? "TEA" : "TEP";
+      preInfTd2.classList.add(avg2 >= 7 ? "tea" : "tep");
+    }
+    tr2.appendChild(preInfTd2);
+
     // Average cell
     const avgTd2 = document.createElement("td");
     avgTd2.className = "average-cell";
-    const avg2 = calculateAverage(student.id, "cuatri2");
     avgTd2.textContent = avg2.toFixed(2);
     applyGradeColor(avgTd2, avg2);
     tr2.appendChild(avgTd2);

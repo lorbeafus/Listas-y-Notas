@@ -1,6 +1,8 @@
 // Course management
 let courses = [];
 let editingCourseId = null;
+let draggedCard = null;
+let draggedCourseId = null;
 
 // DOM Elements
 const btnAddCourse = document.getElementById('btn-add-course');
@@ -35,7 +37,7 @@ function saveCourses() {
 
 // Attach event listeners
 function attachEventListeners() {
-    btnAddCourse.addEventListener('click', openCourseModal);
+    btnAddCourse.addEventListener('click', () => openCourseModal());
     btnSaveCourse.addEventListener('click', saveCourse);
     btnCancelCourse.addEventListener('click', closeCourseModal);
     
@@ -175,7 +177,10 @@ function renderCourses() {
         
         const card = document.createElement('div');
         card.className = 'course-card';
+        card.draggable = true;
+        card.dataset.courseId = course.id;
         card.innerHTML = `
+            <div class="drag-handle" title="Mantener presionado para mover">⠿</div>
             <div class="course-icon">📚</div>
             <div class="course-header">
                 <div class="course-info">
@@ -212,8 +217,68 @@ function renderCourses() {
             </div>
         `;
 
+        // Drag events
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('dragenter', handleDragEnter);
+        card.addEventListener('dragleave', handleDragLeave);
+        card.addEventListener('drop', handleDrop);
+
         coursesGrid.appendChild(card);
     });
+}
+
+// --- Drag & Drop handlers ---
+function handleDragStart(e) {
+    draggedCard = this;
+    draggedCourseId = this.dataset.courseId;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', draggedCourseId);
+}
+
+function handleDragEnd() {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.course-card').forEach(c => c.classList.remove('drag-over'));
+    draggedCard = null;
+    draggedCourseId = null;
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    if (this !== draggedCard) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave() {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+
+    if (this === draggedCard) return;
+
+    const targetCourseId = this.dataset.courseId;
+    const fromIndex = courses.findIndex(c => c.id === draggedCourseId);
+    const toIndex = courses.findIndex(c => c.id === targetCourseId);
+
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    // Reorder array
+    const [movedCourse] = courses.splice(fromIndex, 1);
+    courses.splice(toIndex, 0, movedCourse);
+
+    saveCourses();
+    renderCourses();
 }
 
 // Make functions global
