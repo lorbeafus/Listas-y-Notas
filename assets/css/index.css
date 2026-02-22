@@ -134,6 +134,12 @@ h1 {
     margin-bottom: 5px;
 }
 
+.course-school {
+    color: #5a6268;
+    font-size: 0.85em;
+    margin-bottom: 2px;
+}
+
 .course-year {
     color: #6c757d;
     font-size: 0.9em;

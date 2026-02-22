@@ -78,7 +78,8 @@ function updatePageTitle() {
     if (course) {
         courseYear = parseInt(course.year) || new Date().getFullYear();
         document.getElementById('course-title').textContent = `📋 Asistencias - ${course.name}`;
-        document.getElementById('course-subtitle').textContent = `Año ${course.year}`;
+        const subtitle = course.school ? `${course.school} — Año ${course.year}` : `Año ${course.year}`;
+        document.getElementById('course-subtitle').textContent = subtitle;
         document.title = `Asistencias - ${course.name}`;
     }
 }

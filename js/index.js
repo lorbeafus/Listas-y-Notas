@@ -1,10 +1,12 @@
 // Course management
 let courses = [];
+let editingCourseId = null;
 
 // DOM Elements
 const btnAddCourse = document.getElementById('btn-add-course');
 const modal = document.getElementById('modal-course');
 const courseNameInput = document.getElementById('course-name-input');
+const courseSchoolInput = document.getElementById('course-school-input');
 const courseYearInput = document.getElementById('course-year-input');
 const btnSaveCourse = document.getElementById('btn-save-course');
 const btnCancelCourse = document.getElementById('btn-cancel-course');
@@ -50,12 +52,35 @@ function attachEventListeners() {
     });
 }
 
-// Open course modal
-function openCourseModal() {
+// Open course modal (create or edit)
+function openCourseModal(courseId = null) {
+    editingCourseId = courseId;
+    const modalTitle = modal.querySelector('h2');
+    const saveBtn = document.getElementById('btn-save-course');
+
+    if (courseId) {
+        const course = courses.find(c => c.id === courseId);
+        if (!course) return;
+        modalTitle.textContent = 'Editar Curso';
+        saveBtn.textContent = 'Guardar Cambios';
+        courseNameInput.value = course.name;
+        courseSchoolInput.value = course.school || '';
+        courseYearInput.value = course.year;
+    } else {
+        modalTitle.textContent = 'Crear Nuevo Curso';
+        saveBtn.textContent = 'Crear Curso';
+        courseNameInput.value = '';
+        courseSchoolInput.value = '';
+        courseYearInput.value = new Date().getFullYear();
+    }
+
     modal.classList.add('active');
-    courseNameInput.value = '';
-    courseYearInput.value = new Date().getFullYear();
     courseNameInput.focus();
+}
+
+// Edit course (called from card)
+function editCourse(courseId) {
+    openCourseModal(courseId);
 }
 
 // Close course modal
@@ -63,9 +88,10 @@ function closeCourseModal() {
     modal.classList.remove('active');
 }
 
-// Save course
+// Save course (create or update)
 function saveCourse() {
     const name = courseNameInput.value.trim();
+    const school = courseSchoolInput.value.trim();
     const year = courseYearInput.value.trim();
 
     if (name === '') {
@@ -73,15 +99,27 @@ function saveCourse() {
         return;
     }
 
-    const courseId = 'course_' + Date.now();
-    const course = {
-        id: courseId,
-        name: name,
-        year: year || new Date().getFullYear(),
-        createdAt: new Date().toISOString()
-    };
+    if (editingCourseId) {
+        // Update existing course
+        const course = courses.find(c => c.id === editingCourseId);
+        if (course) {
+            course.name = name;
+            course.school = school;
+            course.year = year || new Date().getFullYear();
+        }
+    } else {
+        // Create new course
+        const courseId = 'course_' + Date.now();
+        const course = {
+            id: courseId,
+            name: name,
+            school: school,
+            year: year || new Date().getFullYear(),
+            createdAt: new Date().toISOString()
+        };
+        courses.push(course);
+    }
 
-    courses.push(course);
     saveCourses();
     renderCourses();
     closeCourseModal();
@@ -142,11 +180,17 @@ function renderCourses() {
             <div class="course-header">
                 <div class="course-info">
                     <h3>${course.name}</h3>
+                    <div class="course-school">${course.school ? '🏫 ' + course.school : ''}</div>
                     <div class="course-year">Año ${course.year}</div>
                 </div>
-                <button class="btn-delete-course" onclick="event.stopPropagation(); deleteCourse('${course.id}')">
-                    🗑️
-                </button>
+                <div class="course-card-actions">
+                    <button class="btn-edit-course" onclick="event.stopPropagation(); editCourse('${course.id}')">
+                        ✏️
+                    </button>
+                    <button class="btn-delete-course" onclick="event.stopPropagation(); deleteCourse('${course.id}')">
+                        🗑️
+                    </button>
+                </div>
             </div>
             <div class="course-stats">
                 <div class="stat">
@@ -172,8 +216,9 @@ function renderCourses() {
     });
 }
 
-// Make deleteCourse global
+// Make functions global
 window.deleteCourse = deleteCourse;
+window.editCourse = editCourse;
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
