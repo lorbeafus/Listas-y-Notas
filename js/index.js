@@ -159,10 +159,10 @@ function renderCourses() {
                 </div>
             </div>
             <div class="course-actions">
-                <button class="btn-course-action btn-notas" onclick="event.stopPropagation(); window.location.href='notas.html?curso=${course.id}'">
+                <button class="btn-course-action btn-notas" onclick="event.stopPropagation(); window.location.href='pages/notas.html?curso=${course.id}'">
                     📝 Notas
                 </button>
-                <button class="btn-course-action btn-asistencia" onclick="event.stopPropagation(); window.location.href='asistencia.html?curso=${course.id}'">
+                <button class="btn-course-action btn-asistencia" onclick="event.stopPropagation(); window.location.href='pages/asistencia.html?curso=${course.id}'">
                     📋 Asistencias
                 </button>
             </div>

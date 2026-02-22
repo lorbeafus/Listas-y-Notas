@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Asistencias</title>
-    <link rel="stylesheet" href="css/asistencia.css">
+    <link rel="stylesheet" href="../assets/css/asistencia.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script defer src="js/asistencia.js"></script>
+    <script defer src="../js/asistencia.js"></script>
 </head>
 
 <body>
     <div class="container">
         <header>
             <div class="header-left">
-                <button id="btn-back" class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Volver al
+                <button id="btn-back" class="btn btn-back" onclick="window.location.href='../index.html'">⬅️ Volver al
                     Dashboard</button>
                 <div class="header-title">
                     <h1 id="course-title">📋 Sistema de Asistencias</h1>
@@ -69,7 +69,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
+                navigator.serviceWorker.register('../service-worker.js')
                     .then(reg => console.log('Service Worker registrado', reg))
                     .catch(err => console.log('Error al registrar Service Worker', err));
             });

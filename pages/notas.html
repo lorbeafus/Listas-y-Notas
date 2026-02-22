@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Notas 2026 - Fusillo</title>
-    <link rel="stylesheet" href="css/notas.css">
+    <link rel="stylesheet" href="../assets/css/notas.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script defer src="js/notas.js"></script>
+    <script defer src="../js/notas.js"></script>
 </head>
 
 <body>
     <div class="container">
         <header>
             <div class="header-left">
-                <button id="btn-back" class="btn btn-back" onclick="window.location.href='index.html'">⬅️ Volver al
+                <button id="btn-back" class="btn btn-back" onclick="window.location.href='../index.html'">⬅️ Volver al
                     Dashboard</button>
                 <div class="header-title">
                     <h1 id="course-title">📚 Sistema de Notas</h1>
@@ -121,7 +121,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
+                navigator.serviceWorker.register('../service-worker.js')
                     .then(reg => console.log('Service Worker registrado', reg))
                     .catch(err => console.log('Error al registrar Service Worker', err));
             });

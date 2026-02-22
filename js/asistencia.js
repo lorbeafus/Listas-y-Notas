@@ -4,7 +4,7 @@ const currentCourseId = urlParams.get('curso');
 
 // Redirect to dashboard if no course ID
 if (!currentCourseId) {
-    window.location.href = 'index.html';
+    window.location.href = '../index.html';
 }
 
 // Month configuration (Marzo-Diciembre with colors)
