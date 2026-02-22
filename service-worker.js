@@ -1,18 +1,18 @@
-const CACHE_NAME = 'listas-notas-v1';
+const CACHE_NAME = 'listas-notas-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './notas.html',
-  './asistencia.html',
-  './css/index.css',
-  './css/notas.css',
-  './css/asistencia.css',
+  './pages/notas.html',
+  './pages/asistencia.html',
+  './assets/css/index.css',
+  './assets/css/notas.css',
+  './assets/css/asistencia.css',
   './js/index.js',
   './js/notas.js',
   './js/asistencia.js',
   './manifest.json',
-  './img/icon-192.svg',
-  './img/icon-512.svg',
+  './assets/img/icon-192.svg',
+  './assets/img/icon-512.svg',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
