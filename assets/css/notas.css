@@ -290,10 +290,10 @@ th {
 }
 
 .final-col {
-  background: linear-gradient(135deg, #5b59e6 0%, #8789ee 100%);
-  color: white;
+  background: #e9ecef;
   font-weight: bold;
   font-size: 1.1em;
+  color: var(--text-color);
 }
 
 .student-name {

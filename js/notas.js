@@ -394,6 +394,7 @@ function renderFinalGrades() {
     const finalTd = document.createElement("td");
     finalTd.className = "final-col";
     finalTd.textContent = finalGrade.toFixed(2);
+    applyGradeColor(finalTd, finalGrade);
     tr.appendChild(finalTd);
 
     finalBody.appendChild(tr);

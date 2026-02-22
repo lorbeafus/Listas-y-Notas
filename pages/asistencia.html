@@ -17,6 +17,7 @@
             <div class="header-left">
                 <button id="btn-back" class="btn btn-back" onclick="window.location.href='../index.html'">⬅️ Volver al
                     Dashboard</button>
+
                 <div class="header-title">
                     <h1 id="course-title">📋 Sistema de Asistencias</h1>
                     <p id="course-subtitle" class="course-subtitle"></p>
@@ -31,6 +32,15 @@
         </header>
 
         <div class="attendance-wrapper">
+            <!-- Referencias de asistencia -->
+            <div class="attendance-legend">
+                <span class="legend-item"><span class="legend-key">P</span> Presente</span>
+                <span class="legend-item"><span class="legend-key">A</span> Ausente </span>
+                <span class="legend-item"><span class="legend-key">R</span> Retiro o entrada tarde (Media falta)</span>
+                <span class="legend-item"><span class="legend-key">Casillero Vacio (Por feriado o dia no
+                        laborable)</span> No se toma en cuenta</span>
+            </div>
+
             <!-- Monthly Calendar Grid -->
             <div class="calendar-container" id="calendar-container">
                 <!-- Dynamically generated -->
