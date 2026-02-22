@@ -11,8 +11,8 @@ const ASSETS_TO_CACHE = [
   './js/notas.js',
   './js/asistencia.js',
   './manifest.json',
-  './assets/img/icon-192.svg',
-  './assets/img/icon-512.svg',
+  './assets/img/icon-192.png',
+  './assets/img/icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
