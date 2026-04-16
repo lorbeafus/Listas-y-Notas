@@ -356,6 +356,7 @@ function renderCalendar() {
                 input.dataset.studentIndex = index;
                 input.dataset.key = key;
                 input.dataset.month = month.name;
+                input.enterKeyHint = 'next'; // Indica al teclado móvil que pase al "siguiente"
                 
                 input.addEventListener('input', (e) => {
                     const val = e.target.value.toUpperCase();
@@ -368,7 +369,7 @@ function renderCalendar() {
                 });
 
                 input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === 'Enter' || e.key === 'Tab') {
                         e.preventDefault();
                         const currentKey = e.target.dataset.key;
                         const nextStudentIndex = parseInt(e.target.dataset.studentIndex) + 1;

@@ -295,7 +295,7 @@ function renderStudentRows() {
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri1?.[index] || "";
       td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
-                data-student="${student.id}" data-section="1" data-index="${index}" data-student-index="${studentIndex}">`;
+                data-student="${student.id}" data-section="1" data-index="${index}" data-student-index="${studentIndex}" enterkeyhint="next">`;
       tr1.appendChild(td);
     });
 
@@ -335,7 +335,7 @@ function renderStudentRows() {
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri2?.[index] || "";
       td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
-                data-student="${student.id}" data-section="2" data-index="${index}" data-student-index="${studentIndex}">`;
+                data-student="${student.id}" data-section="2" data-index="${index}" data-student-index="${studentIndex}" enterkeyhint="next">`;
       tr2.appendChild(td);
     });
 
@@ -385,7 +385,7 @@ function renderStudentRows() {
     });
 
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
         const section = e.target.dataset.section;
         const index = e.target.dataset.index;
