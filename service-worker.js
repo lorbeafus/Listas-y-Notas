@@ -1,4 +1,4 @@
-const CACHE_NAME = 'listas-notas-v2';
+const CACHE_NAME = 'listas-notas-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,8 +11,7 @@ const ASSETS_TO_CACHE = [
   './js/notas.js',
   './js/asistencia.js',
   './manifest.json',
-  './assets/img/icon-192.png',
-  './assets/img/icon-512.png',
+  './assets/img/logo_agenda.jpg',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
