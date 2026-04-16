@@ -10,14 +10,20 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "assets/img/logo_agenda.jpg",
-      "type": "image/jpeg",
+      "src": "assets/img/logo_agenda.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/logo_agenda.png",
+      "type": "image/png",
       "sizes": "1024x1024",
       "purpose": "any"
     },
     {
-      "src": "assets/img/logo_agenda.jpg",
-      "type": "image/jpeg",
+      "src": "assets/img/logo_agenda.png",
+      "type": "image/png",
       "sizes": "1024x1024",
       "purpose": "maskable"
     }
