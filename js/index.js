@@ -181,7 +181,7 @@ function renderCourses() {
         card.dataset.courseId = course.id;
         card.innerHTML = `
             <div class="drag-handle" title="Mantener presionado para mover">⠿</div>
-            <div class="course-icon">📚</div>
+            <div class="course-icon"><img src="assets/img/logo_agenda.png" alt="Curso" style="width: 60px; height: 60px; object-fit: contain;"></div>
             <div class="course-header">
                 <div class="course-info">
                     <h3>${course.name}</h3>
