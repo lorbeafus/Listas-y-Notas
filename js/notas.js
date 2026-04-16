@@ -31,6 +31,8 @@ const evaluationNameInput = document.getElementById("evaluation-name-input");
 const btnSaveEvaluation = document.getElementById("btn-save-evaluation");
 const btnCancelEvaluation = document.getElementById("btn-cancel-evaluation");
 let currentEvaluationSection = null;
+let pendingFocus = null; // { section, index, studentIndex }
+
 
 // Initialize app
 function init() {
@@ -189,6 +191,22 @@ function renderTables() {
   renderEvaluationHeaders();
   renderStudentRows();
   renderFinalGrades();
+  restoreFocus();
+}
+
+function restoreFocus() {
+  if (pendingFocus) {
+    const { section, index, studentIndex } = pendingFocus;
+    const selector = `input[data-section="${section}"][data-index="${index}"][data-student-index="${studentIndex}"]`;
+    const nextInput = document.querySelector(selector);
+    
+    if (nextInput) {
+      nextInput.focus();
+      // Only select if it's the element we targeted, or just always select for UX
+      if (nextInput.tagName === 'INPUT') nextInput.select();
+    }
+    pendingFocus = null;
+  }
 }
 
 // Render evaluation headers
@@ -373,6 +391,17 @@ function renderStudentRows() {
         const index = e.target.dataset.index;
         const nextStudentIndex = parseInt(e.target.dataset.studentIndex) + 1;
         
+        // We set the pending focus and wait for the render (triggered by 'change' or manually)
+        pendingFocus = {
+          section: section,
+          index: index,
+          studentIndex: nextStudentIndex
+        };
+
+        // If 'change' doesn't fire (e.g. value didn't change), we manually trigger the focus move
+        // But usually, in type="number", pressing Enter triggers change if blurred.
+        // Let's force a call to restoreFocus if renderTables isn't about to happen.
+        // To be safe, we try to find it now; if it fails (because of re-render), the restoreFocus in renderTables will catch it.
         const nextInput = document.querySelector(
           `input[data-section="${section}"][data-index="${index}"][data-student-index="${nextStudentIndex}"]`
         );
@@ -380,6 +409,7 @@ function renderStudentRows() {
         if (nextInput) {
           nextInput.focus();
           nextInput.select();
+          pendingFocus = null; // Already focused, no need to wait
         }
       }
     });

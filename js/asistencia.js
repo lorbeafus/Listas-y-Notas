@@ -370,8 +370,12 @@ function renderCalendar() {
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
+                        const currentKey = e.target.dataset.key;
                         const nextStudentIndex = parseInt(e.target.dataset.studentIndex) + 1;
-                        const nextInput = document.querySelector(`input[data-key="${key}"][data-student-index="${nextStudentIndex}"]`);
+                        
+                        // Buscamos el input en la misma columna (key) pero siguiente fila (studentIndex)
+                        const nextInput = document.querySelector(`input[data-key="${currentKey}"][data-student-index="${nextStudentIndex}"]`);
+                        
                         if (nextInput) {
                             nextInput.focus();
                             nextInput.select();
