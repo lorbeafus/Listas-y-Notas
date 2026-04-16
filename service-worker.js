@@ -1,4 +1,4 @@
-const CACHE_NAME = 'listas-notas-v6';
+const CACHE_NAME = 'listas-notas-v8';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -24,6 +24,21 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         return cache.addAll(ASSETS_TO_CACHE);
       })
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -37,17 +52,3 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-});

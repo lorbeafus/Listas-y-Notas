@@ -198,13 +198,16 @@ function restoreFocus() {
   if (pendingFocus) {
     const { section, index, studentIndex } = pendingFocus;
     const selector = `input[data-section="${section}"][data-index="${index}"][data-student-index="${studentIndex}"]`;
-    const nextInput = document.querySelector(selector);
     
-    if (nextInput) {
-      nextInput.focus();
-      // Only select if it's the element we targeted, or just always select for UX
-      if (nextInput.tagName === 'INPUT') nextInput.select();
-    }
+    // Usamos setTimeout para asegurar que el navegador haya terminado de procesar el DOM
+    setTimeout(() => {
+      const nextInput = document.querySelector(selector);
+      if (nextInput) {
+        nextInput.focus();
+        if (nextInput.tagName === 'INPUT') nextInput.select();
+      }
+    }, 50);
+    
     pendingFocus = null;
   }
 }
