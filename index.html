@@ -16,17 +16,17 @@
 </head>
 
 <body>
-    <div class="container">
+    <main class="container">
         <header>
             <h1>📚 Mis Cursos</h1>
             <button id="btn-add-course" class="btn btn-primary">➕ Crear Nuevo Curso</button>
         </header>
 
-        <div class="courses-grid" id="courses-grid">
+        <section class="courses-grid" id="courses-grid" aria-label="Listado de cursos">
             <!-- Dynamic course cards -->
-        </div>
+        </section>
 
-        <div class="empty-state" id="empty-state">
+        <section class="empty-state" id="empty-state">
             <div class="empty-icon">
                 <img src="assets/img/logo_agenda.png" alt="Logo Agenda" style="width: 150px; height: 150px; object-fit: contain;">
             </div>
@@ -35,13 +35,13 @@
             <button class="btn btn-primary btn-large" onclick="document.getElementById('btn-add-course').click()">
                 ➕ Crear Mi Primer Curso
             </button>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- Modal for adding course -->
-    <div id="modal-course" class="modal">
+    <div id="modal-course" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
-            <h2>Crear Nuevo Curso</h2>
+            <h2 id="modal-title">Crear Nuevo Curso</h2>
             <div class="form-group">
                 <label for="course-name-input">Nombre del Curso:</label>
                 <input type="text" id="course-name-input" placeholder="Ej: 2°A Matemática" autocomplete="off">

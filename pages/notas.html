@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <main class="container">
         <header>
             <div class="header-left">
                 <button id="btn-back" class="btn btn-back" onclick="window.location.href='../index.html'">⬅️ Volver al
@@ -35,7 +35,7 @@
             </div>
         </header>
 
-        <div class="table-wrapper">
+        <section class="table-wrapper">
             <table id="notas-table">
                 <thead>
                     <tr id="header-row">
@@ -93,13 +93,13 @@
                     <!-- Dynamic final grades -->
                 </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- Modal for adding student -->
-    <div id="modal-student" class="modal">
+    <div id="modal-student" class="modal" role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
         <div class="modal-content">
-            <h2>Agregar Estudiante</h2>
+            <h2 id="student-modal-title">Agregar Estudiante</h2>
             <input type="text" id="student-name-input" placeholder="Nombre del estudiante" autocomplete="off">
             <div class="modal-buttons">
                 <button id="btn-save-student" class="btn btn-primary">Guardar</button>
@@ -109,9 +109,9 @@
     </div>
 
     <!-- Modal for adding evaluation -->
-    <div id="modal-evaluation" class="modal">
+    <div id="modal-evaluation" class="modal" role="dialog" aria-modal="true" aria-labelledby="evaluation-modal-title">
         <div class="modal-content">
-            <h2>Agregar Actividad</h2>
+            <h2 id="evaluation-modal-title">Agregar Actividad</h2>
             <div class="form-group">
                 <label for="evaluation-name-input">Nombre de la nueva actividad:</label>
                 <input type="text" id="evaluation-name-input" placeholder="Ej: Evaluación 1, TP 2..."

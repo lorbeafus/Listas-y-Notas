@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <main class="container">
         <header>
             <div class="header-left">
                 <button id="btn-back" class="btn btn-back" onclick="window.location.href='../index.html'">⬅️ Volver al
@@ -36,15 +36,15 @@
             </div>
         </header>
 
-        <div class="attendance-wrapper">
+        <section class="attendance-wrapper">
             <!-- Referencias de asistencia -->
-            <div class="attendance-legend">
+            <aside class="attendance-legend" aria-label="Leyenda de asistencia">
                 <span class="legend-item"><span class="legend-key">P</span> Presente</span>
                 <span class="legend-item"><span class="legend-key">A</span> Ausente </span>
                 <span class="legend-item"><span class="legend-key">R</span> Retiro o entrada tarde (Media falta)</span>
                 <span class="legend-item"><span class="legend-key">Casillero Vacio (Por feriado o dia no
                         laborable)</span> No se toma en cuenta</span>
-            </div>
+            </aside>
 
             <!-- Monthly Calendar Grid -->
             <div class="calendar-container" id="calendar-container">
@@ -52,19 +52,19 @@
             </div>
 
             <!-- Summary Section -->
-            <div class="summary-section">
+            <section class="summary-section">
                 <h2>Resumen de Asistencias</h2>
                 <div id="summary-container" class="summary-grid">
                     <!-- Dynamically generated -->
                 </div>
-            </div>
-        </div>
-    </div>
+            </section>
+        </section>
+    </main>
 
     <!-- Modal for configuring class days -->
-    <div id="modal-configure-days" class="modal">
+    <div id="modal-configure-days" class="modal" role="dialog" aria-modal="true" aria-labelledby="config-modal-title">
         <div class="modal-content-large">
-            <h2>⚙️ Configurar Días de Clase</h2>
+            <h2 id="config-modal-title">⚙️ Configurar Días de Clase</h2>
             <p class="modal-description">Selecciona qué días de la semana tienes clases en cada mes. El sistema
                 calculará automáticamente las fechas según el año del curso.</p>
 

@@ -175,7 +175,7 @@ function renderCourses() {
     courses.forEach(course => {
         const stats = getCourseStats(course.id);
         
-        const card = document.createElement('div');
+        const card = document.createElement('article');
         card.className = 'course-card';
         card.draggable = true;
         card.dataset.courseId = course.id;
