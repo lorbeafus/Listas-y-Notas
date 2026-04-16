@@ -353,6 +353,7 @@ function renderCalendar() {
                 input.maxLength = 1;
                 input.value = value;
                 input.dataset.studentId = student.id;
+                input.dataset.studentIndex = index;
                 input.dataset.key = key;
                 input.dataset.month = month.name;
                 
@@ -363,6 +364,18 @@ function renderCalendar() {
                         saveAttendance(e.target.dataset.studentId, e.target.dataset.key, val);
                     } else {
                         e.target.value = '';
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const nextStudentIndex = parseInt(e.target.dataset.studentIndex) + 1;
+                        const nextInput = document.querySelector(`input[data-key="${key}"][data-student-index="${nextStudentIndex}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                            nextInput.select();
+                        }
                     }
                 });
                 

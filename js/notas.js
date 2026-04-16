@@ -259,7 +259,7 @@ function renderStudentRows() {
   tbody1.innerHTML = "";
   tbody2.innerHTML = "";
 
-  appData.students.forEach((student) => {
+  appData.students.forEach((student, studentIndex) => {
     // Cuatrimestre 1
     const tr1 = document.createElement("tr");
     tr1.innerHTML = `
@@ -277,7 +277,7 @@ function renderStudentRows() {
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri1?.[index] || "";
       td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
-                data-student="${student.id}" data-section="1" data-index="${index}">`;
+                data-student="${student.id}" data-section="1" data-index="${index}" data-student-index="${studentIndex}">`;
       tr1.appendChild(td);
     });
 
@@ -317,7 +317,7 @@ function renderStudentRows() {
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri2?.[index] || "";
       td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
-                data-student="${student.id}" data-section="2" data-index="${index}">`;
+                data-student="${student.id}" data-section="2" data-index="${index}" data-student-index="${studentIndex}">`;
       tr2.appendChild(td);
     });
 
@@ -364,6 +364,24 @@ function renderStudentRows() {
 
       saveData();
       renderTables();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const section = e.target.dataset.section;
+        const index = e.target.dataset.index;
+        const nextStudentIndex = parseInt(e.target.dataset.studentIndex) + 1;
+        
+        const nextInput = document.querySelector(
+          `input[data-section="${section}"][data-index="${index}"][data-student-index="${nextStudentIndex}"]`
+        );
+        
+        if (nextInput) {
+          nextInput.focus();
+          nextInput.select();
+        }
+      }
     });
 
     // Apply initial color
