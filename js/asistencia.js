@@ -9,16 +9,16 @@ if (!currentCourseId) {
 
 // Month configuration (Marzo-Diciembre with colors)
 const MONTHS = [
-    { name: 'MARZO', number: 3, color: '#90EE90' },
-    { name: 'ABRIL', number: 4, color: '#87CEEB' },
-    { name: 'MAYO', number: 5, color: '#FFA500' },
-    { name: 'JUNIO', number: 6, color: '#FFB6C1' },
-    { name: 'JULIO', number: 7, color: '#D3D3D3' },
-    { name: 'AGOSTO', number: 8, color: '#87CEFA' },
-    { name: 'SEPTIEMBRE', number: 9, color: '#FFB6C1' },
-    { name: 'OCTUBRE', number: 10, color: '#90EE90' },
-    { name: 'NOVIEMBRE', number: 11, color: '#D8BFD8' },
-    { name: 'DICIEMBRE', number: 12, color: '#87CEEB' }
+    { name: 'MARZO', number: 3, color: '#A8E6CF' },
+    { name: 'ABRIL', number: 4, color: '#DCEDC1' },
+    { name: 'MAYO', number: 5, color: '#FFD3B6' },
+    { name: 'JUNIO', number: 6, color: '#FFAAA5' },
+    { name: 'JULIO', number: 7, color: '#FFB7B2' },
+    { name: 'AGOSTO', number: 8, color: '#DCD6F7' },
+    { name: 'SEPTIEMBRE', number: 9, color: '#A6B1E1' },
+    { name: 'OCTUBRE', number: 10, color: '#BDE0FE' },
+    { name: 'NOVIEMBRE', number: 11, color: '#C1E1C1' },
+    { name: 'DICIEMBRE', number: 12, color: '#FFCC99' }
 ];
 
 const WEEKDAYS = [

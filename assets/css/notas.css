@@ -5,19 +5,20 @@
 }
 
 :root {
-  --primary-color: #4a90e2;
-  --success-color: #4caf50;
-  --danger-color: #e74c3c;
-  --bg-color: #f5f7fa;
+  --primary-color: #7EB6FF;
+  --success-color: #A8E6CF;
+  --danger-color: #FFB7B2;
+  --accent-color: #FFCC99;
+  --bg-color: #FBFAF8;
   --card-bg: #ffffff;
-  --border-color: #ddd;
-  --text-color: #333;
-  --hover-color: #f0f0f0;
+  --border-color: #e0e0e0;
+  --text-color: #444;
+  --hover-color: #f0f8ff;
 }
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #397714 0%, #bdeebdd4 100%);
+  background: linear-gradient(135deg, #E0F2F1 0%, #E3F2FD 100%);
   min-height: 100vh;
   padding: 20px;
 }
@@ -32,7 +33,7 @@ body {
 }
 
 header {
-  background: linear-gradient(135deg, #397714 0%, #bdeebdd4 100%);
+  background: linear-gradient(135deg, #7EB6FF 0%, #A8E6CF 100%);
   color: white;
   padding: 30px;
   display: flex;
@@ -82,7 +83,7 @@ header {
 .btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -90,7 +91,7 @@ header {
 }
 
 .btn-primary {
-  background: #365d37;
+  background: linear-gradient(135deg, #7EB6FF 0%, #6495ED 100%);
   color: white;
 }
 
@@ -102,8 +103,8 @@ header {
 
 .btn-secondary {
   background: white;
-  color: #397714;
-  border: 2px solid #397714;
+  color: #7EB6FF;
+  border: 2px solid #7EB6FF;
 }
 
 .btn-secondary:hover {

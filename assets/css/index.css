@@ -5,15 +5,16 @@
 }
 
 :root {
-    --primary-color: #4a90e2;
-    --success-color: #4caf50;
-    --danger-color: #e74c3c;
-    --bg-gradient-1: #308824;
-    --bg-gradient-2: #b3e1bc;
+    --primary-color: #7EB6FF;
+    --success-color: #A8E6CF;
+    --danger-color: #FFB7B2;
+    --accent-color: #FFCC99;
+    --bg-gradient-1: #E0F2F1;
+    --bg-gradient-2: #E3F2FD;
     --card-bg: #ffffff;
-    --border-color: #ddd;
-    --text-color: #333;
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    --border-color: #e0e0e0;
+    --text-color: #444;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 body {
@@ -50,7 +51,7 @@ h1 {
 .btn {
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 15px;
     font-weight: 500;
@@ -58,7 +59,7 @@ h1 {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #7EB6FF 0%, #6495ED 100%);
     color: white;
 }
 
