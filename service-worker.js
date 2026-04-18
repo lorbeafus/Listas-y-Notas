@@ -1,4 +1,4 @@
-const CACHE_NAME = 'listas-notas-v8';
+const CACHE_NAME = 'Agenda-docente-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
