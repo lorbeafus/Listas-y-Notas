@@ -1,7 +1,7 @@
 {
-  "name": "Listas y Notas",
-  "short_name": "ListasNotas",
-  "id": "/Listas-y-Notas/",
+  "name": "Agenda docente",
+  "short_name": "Agenda docente",
+  "id": "/Agenda docente/",
   "description": "Aplicación para gestión de notas y asistencias escolares.",
   "start_url": "./index.html",
   "display": "standalone",
