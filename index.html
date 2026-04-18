@@ -9,9 +9,9 @@
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="ListasNotas">
     <link rel="apple-touch-icon" href="assets/img/logo_agenda.png">
     <link rel="icon" type="image/png" href="assets/img/logo_agenda.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script defer src="js/index.js"></script>
 </head>
 
@@ -22,7 +22,7 @@
             <div class="header-actions">
                 <button id="btn-export-data" class="btn btn-secondary" title="Descargar copia de seguridad">💾 Backup</button>
                 <button id="btn-import-data" class="btn btn-secondary" title="Restaurar de una copia">📥 Restaurar</button>
-                <input type="file" id="input-import-data" accept=".json" style="display: none;">
+                <input type="file" id="input-import-data" accept=".xlsx" style="display: none;">
                 <button id="btn-add-course" class="btn btn-primary">Crear Nuevo Curso</button>
             </div>
         </header>

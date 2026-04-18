@@ -302,18 +302,20 @@ function exportData() {
             }
         });
 
-        const dataStr = JSON.stringify(dataToExport, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
+        const dataStr = JSON.stringify(dataToExport);
         
-        const link = document.createElement('a');
-        link.href = url;
+        const wb = XLSX.utils.book_new();
+        const wsData = [
+            ["⚠️ NO MODIFICAR ESTE ARCHIVO manualmente o podría romperse la copia de seguridad ⚠️"],
+            ["Este archivo contiene los datos de tus notas y asistencias."],
+            [dataStr] // Guardamos los datos en texto puro en la celda A3
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, "Backup_Data");
+        
         const dateStr = new Date().toISOString().split('T')[0];
-        link.download = `backup_agenda_${dateStr}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        XLSX.writeFile(wb, `backup_agenda_${dateStr}.xlsx`);
+        
     } catch(err) {
         alert("Hubo un error al exportar los datos: " + err.message);
     }
@@ -326,14 +328,24 @@ function importData(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            const importedData = JSON.parse(e.target.result);
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // Los datos en JSON se encuentran en la celda A3
+            const cellA3 = worksheet['A3'];
+            if (!cellA3 || !cellA3.v) {
+                throw new Error("El archivo Excel no parece ser una copia de seguridad oficial de esta App.");
+            }
+
+            const importedData = JSON.parse(cellA3.v);
+            
             if (!importedData.courses) {
                 throw new Error("El archivo no tiene el formato correcto.");
             }
 
-            if(confirm("Estás a punto de reemplazar tus cursos actuales con esta copia de seguridad. ¡Toda la información actual que no esté en la copia se borrará!\n\n¿Estás seguro de continuar?")) {
-                // Clear existing localStorage specific to this app if you want, 
-                // or just overwrite courses and merge
+            if(confirm("Estás a punto de reemplazar tus cursos actuales con esta copia de seguridad en Excel. ¡Toda la información actual que no esté en la copia se borrará!\n\n¿Estás seguro de continuar?")) {
                 localStorage.setItem('courses', JSON.stringify(importedData.courses));
                 
                 if (importedData.data) {
@@ -345,10 +357,10 @@ function importData(event) {
                 window.location.reload();
             }
         } catch (error) {
-            alert('Error al leer el archivo. Asegúrate de que sea una copia válida: ' + error.message);
+            alert('Error al leer el archivo. Asegúrate de que sea una copia en Excel válida: ' + error.message);
         }
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
     // Reset input
     event.target.value = '';
 }
