@@ -6,6 +6,9 @@ let draggedCourseId = null;
 
 // DOM Elements
 const btnAddCourse = document.getElementById('btn-add-course');
+const btnExportData = document.getElementById('btn-export-data');
+const btnImportData = document.getElementById('btn-import-data');
+const inputImportData = document.getElementById('input-import-data');
 const modal = document.getElementById('modal-course');
 const courseNameInput = document.getElementById('course-name-input');
 const courseSchoolInput = document.getElementById('course-school-input');
@@ -38,6 +41,9 @@ function saveCourses() {
 // Attach event listeners
 function attachEventListeners() {
     btnAddCourse.addEventListener('click', () => openCourseModal());
+    btnExportData.addEventListener('click', exportData);
+    btnImportData.addEventListener('click', () => inputImportData.click());
+    inputImportData.addEventListener('change', importData);
     btnSaveCourse.addEventListener('click', saveCourse);
     btnCancelCourse.addEventListener('click', closeCourseModal);
     
@@ -279,6 +285,72 @@ function handleDrop(e) {
 
     saveCourses();
     renderCourses();
+}
+
+// --- Import / Export Handlers ---
+function exportData() {
+    try {
+        const dataToExport = {
+            courses: courses,
+            data: {}
+        };
+        
+        courses.forEach(course => {
+            const courseData = localStorage.getItem(`${course.id}_data`);
+            if (courseData) {
+                dataToExport.data[`${course.id}_data`] = JSON.parse(courseData);
+            }
+        });
+
+        const dataStr = JSON.stringify(dataToExport, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        const dateStr = new Date().toISOString().split('T')[0];
+        link.download = `backup_agenda_${dateStr}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch(err) {
+        alert("Hubo un error al exportar los datos: " + err.message);
+    }
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            if (!importedData.courses) {
+                throw new Error("El archivo no tiene el formato correcto.");
+            }
+
+            if(confirm("Estás a punto de reemplazar tus cursos actuales con esta copia de seguridad. ¡Toda la información actual que no esté en la copia se borrará!\n\n¿Estás seguro de continuar?")) {
+                // Clear existing localStorage specific to this app if you want, 
+                // or just overwrite courses and merge
+                localStorage.setItem('courses', JSON.stringify(importedData.courses));
+                
+                if (importedData.data) {
+                    for (const key in importedData.data) {
+                        localStorage.setItem(key, JSON.stringify(importedData.data[key]));
+                    }
+                }
+                alert("¡Datos restaurados con éxito! La página se recargará.");
+                window.location.reload();
+            }
+        } catch (error) {
+            alert('Error al leer el archivo. Asegúrate de que sea una copia válida: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+    // Reset input
+    event.target.value = '';
 }
 
 // Make functions global
