@@ -314,6 +314,33 @@ th {
   text-align: left;
 }
 
+.student-input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
+  padding: 4px 6px;
+  border-radius: 4px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s ease, outline 0.2s ease;
+}
+
+.student-input:hover {
+  background: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.student-input:focus {
+  outline: 2px solid var(--primary-color);
+  background: white;
+  cursor: text;
+}
+
+
 .btn-delete-student {
   background: #e74c3c;
   color: white;

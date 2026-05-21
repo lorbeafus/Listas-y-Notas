@@ -287,7 +287,7 @@ function renderStudentRows() {
             <td class="fixed-col">
                 <div class="student-name">
                     <span class="student-number">${appData.students.indexOf(student) + 1}.</span>
-                    <span class="student-text">${student.name}</span>
+                    <input type="text" class="student-input" value="${student.name}" data-student="${student.id}" title="Haga clic para editar el nombre" autocomplete="off">
                     <button class="btn-delete-student" onclick="deleteStudent('${student.id}')">🗑️</button>
                 </div>
             </td>
@@ -327,7 +327,7 @@ function renderStudentRows() {
             <td class="fixed-col">
                 <div class="student-name">
                     <span class="student-number">${appData.students.indexOf(student) + 1}.</span>
-                    <span class="student-text">${student.name}</span>
+                    <input type="text" class="student-input" value="${student.name}" data-student="${student.id}" title="Haga clic para editar el nombre" autocomplete="off">
                     <button class="btn-delete-student" onclick="deleteStudent('${student.id}')">🗑️</button>
                 </div>
             </td>
@@ -422,6 +422,35 @@ function renderStudentRows() {
     if (!isNaN(value)) {
       applyGradeColor(input.parentElement, value);
     }
+  });
+
+  // Add event listeners to student name inputs
+  document.querySelectorAll(".student-input").forEach((input) => {
+    input.addEventListener("change", (e) => {
+      const studentId = e.target.dataset.student;
+      const newName = e.target.value.trim();
+      if (newName === "") {
+        alert("Por favor ingrese un nombre válido");
+        renderTables();
+        return;
+      }
+      
+      const student = appData.students.find(s => s.id === studentId);
+      if (student) {
+        student.name = newName;
+        // Sort alphabetically
+        appData.students.sort((a, b) => a.name.localeCompare(b.name));
+        saveData();
+        renderTables();
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.target.blur();
+      }
+    });
   });
 }
 

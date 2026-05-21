@@ -95,6 +95,18 @@ function loadStudents() {
     }
 }
 
+// Save students back to main course data
+function saveStudentsToCourseData() {
+    const courseDataKey = `${currentCourseId}_data`;
+    const savedData = localStorage.getItem(courseDataKey);
+    let data = { students: [] };
+    if (savedData) {
+        data = JSON.parse(savedData);
+    }
+    data.students = students;
+    localStorage.setItem(courseDataKey, JSON.stringify(data));
+}
+
 // Load attendance data
 function loadAttendanceData() {
     const savedData = localStorage.getItem(`${currentCourseId}_attendance`);
@@ -330,7 +342,7 @@ function renderCalendar() {
         nameCell.innerHTML = `
             <div class="student-name-container">
                 <span class="student-number">${index + 1}.</span>
-                <span class="student-text">${student.name}</span>
+                <input type="text" class="student-input" value="${student.name}" data-student-id="${student.id}" title="Haga clic para editar el nombre" autocomplete="off">
             </div>
         `;
         row.appendChild(nameCell);
@@ -417,6 +429,38 @@ function renderCalendar() {
     });
 
     container.appendChild(table);
+
+    // Add event listeners to student name inputs
+    document.querySelectorAll('.student-col .student-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const studentId = e.target.dataset.studentId;
+            const newName = e.target.value.trim();
+            if (newName === '') {
+                alert('Por favor ingrese un nombre válido');
+                renderCalendar();
+                return;
+            }
+            
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                student.name = newName;
+                // Sort students alphabetically
+                students.sort((a, b) => a.name.localeCompare(b.name));
+                // Save updated student array to course data
+                saveStudentsToCourseData();
+                // Re-render calendar and summary
+                renderCalendar();
+                renderSummary();
+            }
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.target.blur();
+            }
+        });
+    });
 }
 
 // Save attendance
