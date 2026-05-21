@@ -297,7 +297,7 @@ function renderStudentRows() {
       const td = document.createElement("td");
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri1?.[index] || "";
-      td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
+      td.innerHTML = `<input type="text" value="${grade}" placeholder="-" 
                 data-student="${student.id}" data-section="1" data-index="${index}" data-student-index="${studentIndex}" enterkeyhint="next">`;
       tr1.appendChild(td);
     });
@@ -337,7 +337,7 @@ function renderStudentRows() {
       const td = document.createElement("td");
       td.className = "grade-cell";
       const grade = appData.grades[student.id]?.cuatri2?.[index] || "";
-      td.innerHTML = `<input type="number" min="0" max="10" step="0.1" value="${grade}" 
+      td.innerHTML = `<input type="text" value="${grade}" placeholder="-" 
                 data-student="${student.id}" data-section="2" data-index="${index}" data-student-index="${studentIndex}" enterkeyhint="next">`;
       tr2.appendChild(td);
     });
@@ -368,7 +368,22 @@ function renderStudentRows() {
       const studentId = e.target.dataset.student;
       const section = e.target.dataset.section;
       const index = parseInt(e.target.dataset.index);
-      const value = parseFloat(e.target.value) || "";
+      
+      const rawValue = e.target.value.trim().toUpperCase();
+      let value = "";
+
+      if (rawValue === "A" || rawValue === "E") {
+        value = rawValue;
+      } else if (rawValue !== "") {
+        const parsed = parseFloat(rawValue.replace(",", "."));
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 10) {
+          value = parsed;
+        } else {
+          alert("Por favor ingrese una nota válida (0-10), 'A' para Ausente o 'E' para Entregado.");
+          e.target.value = appData.grades[studentId]?.[section === "1" ? "cuatri1" : "cuatri2"]?.[index] || "";
+          return;
+        }
+      }
 
       const key = section === "1" ? "cuatri1" : "cuatri2";
       if (!appData.grades[studentId]) {
@@ -377,11 +392,7 @@ function renderStudentRows() {
       appData.grades[studentId][key][index] = value;
 
       // Apply color coding
-      if (value !== "") {
-        applyGradeColor(e.target.parentElement, value);
-      } else {
-        e.target.parentElement.classList.remove("grade-pass", "grade-fail");
-      }
+      applyGradeColor(e.target.parentElement, value);
 
       saveData();
       renderTables();
@@ -418,10 +429,7 @@ function renderStudentRows() {
     });
 
     // Apply initial color
-    const value = parseFloat(input.value);
-    if (!isNaN(value)) {
-      applyGradeColor(input.parentElement, value);
-    }
+    applyGradeColor(input.parentElement, input.value);
   });
 
   // Add event listeners to student name inputs
@@ -494,11 +502,20 @@ function calculateAverage(studentId, section) {
 
 // Apply grade color
 function applyGradeColor(element, grade) {
-  element.classList.remove("grade-pass", "grade-fail");
-  if (grade >= 7) {
-    element.classList.add("grade-pass");
-  } else if (grade > 0) {
-    element.classList.add("grade-fail");
+  element.classList.remove("grade-pass", "grade-fail", "grade-delivered", "grade-absent");
+  if (grade === "E") {
+    element.classList.add("grade-delivered");
+  } else if (grade === "A") {
+    element.classList.add("grade-absent");
+  } else {
+    const numericGrade = parseFloat(grade);
+    if (!isNaN(numericGrade)) {
+      if (numericGrade >= 7) {
+        element.classList.add("grade-pass");
+      } else if (numericGrade > 0) {
+        element.classList.add("grade-fail");
+      }
+    }
   }
 }
 
@@ -645,13 +662,17 @@ function importData(e) {
           appData.evaluations.cuatri1.forEach((_, index) => {
             if (colIndex < row.length) {
               const val = row[colIndex];
-              // Only import if it looks like a number
               if (val !== undefined && val !== null && val !== '') {
                  if (!appData.grades[student.id]) appData.grades[student.id] = { cuatri1: {}, cuatri2: {} };
                  if (!appData.grades[student.id].cuatri1) appData.grades[student.id].cuatri1 = {};
                  
-                 // Handle potential numeric or string input
-                 appData.grades[student.id].cuatri1[index] = val.toString().replace(',', '.');
+                 const strVal = val.toString().trim().toUpperCase();
+                 if (strVal === 'A' || strVal === 'E') {
+                   appData.grades[student.id].cuatri1[index] = strVal;
+                 } else {
+                   const num = parseFloat(strVal.replace(',', '.'));
+                   appData.grades[student.id].cuatri1[index] = !isNaN(num) ? num : '';
+                 }
               }
             }
             colIndex++;
@@ -668,7 +689,13 @@ function importData(e) {
                  if (!appData.grades[student.id]) appData.grades[student.id] = { cuatri1: {}, cuatri2: {} };
                  if (!appData.grades[student.id].cuatri2) appData.grades[student.id].cuatri2 = {};
                  
-                 appData.grades[student.id].cuatri2[index] = val.toString().replace(',', '.');
+                 const strVal = val.toString().trim().toUpperCase();
+                 if (strVal === 'A' || strVal === 'E') {
+                   appData.grades[student.id].cuatri2[index] = strVal;
+                 } else {
+                   const num = parseFloat(strVal.replace(',', '.'));
+                   appData.grades[student.id].cuatri2[index] = !isNaN(num) ? num : '';
+                 }
               }
             }
             colIndex++;
