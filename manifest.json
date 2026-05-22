@@ -2,13 +2,16 @@
   "name": "Agenda docente",
   "short_name": "Agenda docente",
   "id": "/Agenda docente/",
-  "description": "Aplicación para gestión de notas y asistencias escolares.",
+  "description": "Aplicación para gestión de calificaciones y asistencias escolar.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4a90e2",
   "orientation": "portrait",
-  "categories": ["education", "productivity"],
+  "categories": [
+    "education",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "assets/img/icon-192.png",
