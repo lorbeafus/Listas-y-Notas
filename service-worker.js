@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Agenda-docente-v1';
+const CACHE_NAME = 'Agenda-docente-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -43,12 +43,27 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests for caching
+  if (event.request.method !== 'GET') return;
+
+  // For external resources or CDNs, cache first is fine, but for local app files, network first is better.
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached response if found, else fetch from network
-        return response || fetch(event.request);
+    fetch(event.request)
+      .then((networkResponse) => {
+        // If successful, update the cache and return network response
+        if (networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // If offline or network fails, fallback to cache
+        return caches.match(event.request);
       })
   );
 });
+
 
