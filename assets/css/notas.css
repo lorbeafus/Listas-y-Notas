@@ -218,8 +218,21 @@ table {
   border-spacing: 0;
   margin-bottom: 30px;
   border-radius: 12px;
-  overflow: hidden;
   border: 1px solid var(--border-color);
+}
+
+/* Rounded corners for tables since overflow: hidden is removed to allow sticky columns */
+table tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+}
+table tr:first-child th:last-child {
+  border-top-right-radius: 12px;
+}
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
 }
 
 th,
