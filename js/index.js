@@ -319,13 +319,18 @@ function exportData() {
 
         const dataStr = JSON.stringify(dataToExport);
         
-        const wb = XLSX.utils.book_new();
         const wsData = [
             ["⚠️ NO MODIFICAR ESTE ARCHIVO manualmente o podría romperse la copia de seguridad ⚠️"],
-            ["Este archivo contiene los datos de tus notas y asistencias."],
-            [dataStr] // Guardamos los datos en texto puro en la celda A3
+            ["Este archivo contiene los datos de tus notas y asistencias."]
         ];
+
+        const chunkSize = 30000;
+        for (let i = 0; i < dataStr.length; i += chunkSize) {
+            wsData.push([dataStr.substring(i, i + chunkSize)]);
+        }
+
         const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Backup_Data");
         
         const dateStr = new Date().toISOString().split('T')[0];
@@ -348,13 +353,28 @@ function importData(event) {
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
             
-            // Los datos en JSON se encuentran en la celda A3
-            const cellA3 = worksheet['A3'];
-            if (!cellA3 || !cellA3.v) {
-                throw new Error("El archivo Excel no parece ser una copia de seguridad oficial de esta App.");
+            // Recopilar todos los fragmentos del JSON desde la fila 3 en adelante (celdas A3, A4, A5...)
+            let fullJsonStr = "";
+            let rowIndex = 3;
+            while (true) {
+                const cellRef = 'A' + rowIndex;
+                const cell = worksheet[cellRef];
+                if (!cell || cell.v === undefined || cell.v === null || String(cell.v).trim() === "") {
+                    break;
+                }
+                const cellVal = String(cell.v);
+                if (cellVal.startsWith("⚠️") || cellVal.includes("NO MODIFICAR")) {
+                    break;
+                }
+                fullJsonStr += cellVal;
+                rowIndex++;
             }
 
-            const importedData = JSON.parse(cellA3.v);
+            if (fullJsonStr.length === 0) {
+                throw new Error("El archivo Excel no contiene datos de copia de seguridad válidos.");
+            }
+
+            const importedData = JSON.parse(fullJsonStr);
             
             if (!importedData.courses) {
                 throw new Error("El archivo no tiene el formato correcto.");
