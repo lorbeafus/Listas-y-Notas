@@ -300,6 +300,21 @@ function exportData() {
             if (courseData) {
                 dataToExport.data[`${course.id}_data`] = JSON.parse(courseData);
             }
+            
+            const courseAttendance = localStorage.getItem(`${course.id}_attendance`);
+            if (courseAttendance) {
+                dataToExport.data[`${course.id}_attendance`] = JSON.parse(courseAttendance);
+            }
+
+            const courseWeekdays = localStorage.getItem(`${course.id}_weekdays`);
+            if (courseWeekdays) {
+                dataToExport.data[`${course.id}_weekdays`] = JSON.parse(courseWeekdays);
+            }
+
+            const courseStartDate = localStorage.getItem(`${course.id}_startDate`);
+            if (courseStartDate) {
+                dataToExport.data[`${course.id}_startDate`] = courseStartDate;
+            }
         });
 
         const dataStr = JSON.stringify(dataToExport);
@@ -350,7 +365,12 @@ function importData(event) {
                 
                 if (importedData.data) {
                     for (const key in importedData.data) {
-                        localStorage.setItem(key, JSON.stringify(importedData.data[key]));
+                        const val = importedData.data[key];
+                        if (typeof val === 'string') {
+                            localStorage.setItem(key, val);
+                        } else {
+                            localStorage.setItem(key, JSON.stringify(val));
+                        }
                     }
                 }
                 alert("¡Datos restaurados con éxito! La página se recargará.");
